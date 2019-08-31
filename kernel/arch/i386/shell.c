@@ -59,6 +59,7 @@ void shell() {
     uint32_t bufflen = 24;
     char buffer[bufflen+1];
     while(1) {
+        pause();
         printf(">");
         uint32_t i;
         for(i = 0; i < bufflen; i++) {

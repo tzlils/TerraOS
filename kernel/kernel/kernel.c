@@ -10,6 +10,7 @@
 #include <kernel/frame.h>
 #include <kernel/shell.h>
 #include <kernel/vesa.h>
+#include <kernel/utils.h>
 #include <kernel/math.h>
 
 #if defined(__cplusplus)
@@ -74,6 +75,9 @@ void kernel_main(struct multiboot_info *mi) {
     remap_pic();
     init_idt();
 	initialize_keyboard();
+    printf("Max of 1, 2: %c\n", itoa(max(1, 2)));
+    printf("Min of 1, 2: %c\n", itoa(min(1, 2)));
+    printf("Log10 of 64: %c\n", itoa(log(64)));
 
     //set_vesa_background(make_vesa_color(255, 255, 255));
     //draw_line(0, 0, 1280, 720);
@@ -82,7 +86,7 @@ void kernel_main(struct multiboot_info *mi) {
     int b = 1;
     int n = 1;
     while(1) {
-        //set_vesa_color(make_vesa_color(r, g, b));
+        set_vesa_color(make_vesa_color(r, g, b));
         draw_hello();
         n = n + 2;
         //draw_line(0, n, n, 0);
@@ -112,13 +116,9 @@ void kernel_main(struct multiboot_info *mi) {
     
     
 
-    //printf("Starting shell...\n");
-    //shell();
-    //printf("You can now safely abort the system");
-}
-
-void draw_fibbonachi() {
-
+    printf("Starting shell...\n");
+    shell();
+    printf("You can now safely abort the system");
 }
 
 void draw_rect(int x, int y, int w, int h) {
