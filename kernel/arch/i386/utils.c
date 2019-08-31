@@ -21,3 +21,4 @@ void PANIC(char *err) {
     printf("Kernel Panic - Bruh moment: %s", err);
     halt();
 }
+

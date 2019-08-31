@@ -45,6 +45,11 @@ arch/i386/kheap.o \
 arch/i386/frame.o \
 arch/i386/shell.o \
 arch/i386/utils.o \
+arch/i386/vesa.o \
+arch/i386/font.o \
+arch/i386/utils_asm.o \
+arch/i386/realmode.o \
+arch/i386/math.o \
 
 
 OBJS=\
@@ -77,7 +82,6 @@ $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 .c.o:
-	echo $(KERNEL_ARCH_OBJS)
 	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
 
 .S.o:

@@ -16,5 +16,6 @@ void terminal_setcolor(uint8_t color);
 void terminal_setfg(int color);
 void terminal_setbg(int color);
 void move_cursor(uint8_t xpos, uint8_t ypos);
+void terminal_set_status();
 
 #endif

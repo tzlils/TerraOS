@@ -5,6 +5,7 @@
 #include <kernel/tty.h>
 #include "vga.h"
 #include <kernel/serial.h>
+#include <kernel/vesa.h>
 
 #define VGA_COMMAND_PORT 0x3D4
 #define VGA_DATA_PORT    0x3D5
@@ -133,9 +134,13 @@ void terminal_putchar(char c)
  
 void terminal_write(const char* data, size_t size) {
 	for (size_t i = 0; i < size; i++)
-		terminal_putchar(data[i]);
+		vesa_putchar(data[i]);
 }
  
 void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
+}
+
+void terminal_set_status() {
+    
 }

@@ -1,6 +1,7 @@
 #include <kernel/keyboard.h>
 #include <kernel/isr.h>
 #include <kernel/tty.h>
+#include <kernel/vesa.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -71,7 +72,7 @@ static void poll_keyboard_input() {
     // See if there's room in the key buffer, else bug out.
     uint8_t next_hd = (kb_buff_hd + 1) % BUFFLEN;
     if(next_hd == kb_buff_tl) {
-        return;
+        //return;
     }
 
     uint8_t byte = inb(0x60);
@@ -102,7 +103,7 @@ static void poll_keyboard_input() {
     if(keypresses[byte] < 10 && keypresses[byte] > 0) {
         // Key is already pressed. Ignore it.
         keypresses[byte]++; // Increment anyway, so we can roll over and repeat.
-        return;
+        //return;
     }
     keypresses[byte]++;
 
@@ -136,6 +137,7 @@ static void poll_keyboard_input() {
     }
 
     uint8_t ascii = codes[byte];
+    vesa_putchar(codes[byte]);
     if(ascii != 0) {
         kb_buff[kb_buff_hd] = ascii;
         kb_buff_hd = next_hd;
