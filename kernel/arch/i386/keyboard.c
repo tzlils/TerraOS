@@ -137,7 +137,7 @@ static void poll_keyboard_input() {
     }
 
     uint8_t ascii = codes[byte];
-    vesa_putchar(codes[byte]);
+    //vesa_putchar(codes[byte]);
     if(ascii != 0) {
         kb_buff[kb_buff_hd] = ascii;
         kb_buff_hd = next_hd;

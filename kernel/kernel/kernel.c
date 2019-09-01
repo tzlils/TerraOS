@@ -35,8 +35,8 @@ void show_ver() {
 }
 
 void draw_hello() {
-    int x_offset = 100;
-    int y_offset = 200;
+    int x_offset = 500;
+    int y_offset = 500;
     draw_rect(x_offset, y_offset, 30, 100);
     draw_rect(x_offset-50, y_offset, 30, 100);
     draw_rect(x_offset-50, y_offset+40, 50, 20);
@@ -75,26 +75,42 @@ void kernel_main(struct multiboot_info *mi) {
     remap_pic();
     init_idt();
 	initialize_keyboard();
-    printf("Max of 1, 2: %c\n", itoa(max(1, 2)));
-    printf("Min of 1, 2: %c\n", itoa(min(1, 2)));
-    printf("Log10 of 64: %c\n", itoa(log(64)));
+
+    printf ("Log2 of 10: %f\n", log2(10));
+    printf ("2 To the power of 16: %i\n", pow(2, 16));
+    printf("Max of 1, 5: %i\n", max(1, 5));
+    printf("Sin of 5: %f\n", fsin(5));
 
     //set_vesa_background(make_vesa_color(255, 255, 255));
-    //draw_line(0, 0, 1280, 720);
-    int r = 1;
-    int g = 1;
-    int b = 1;
-    int n = 1;
-    while(1) {
-        set_vesa_color(make_vesa_color(r, g, b));
-        draw_hello();
-        n = n + 2;
-        //draw_line(0, n, n, 0);
-        r = sin(g*10);
-        g = cos(b*10);
-        b = cos(r*10);
+    int r = 255;
+    int g = 255;
+    int b = 255;
+    int angle = 0;
+    double x, y;
+
+    draw_hello();
+    draw_line(0, 720/2, 1280, 720/2);
+    for (size_t i = 0; i < 1280; i+=20)
+    {
+        draw_rect(i, 720/2-5, 2, 10);
+    }
+    
+    for (x = 0; x < 1280; x+=3)
+    {
+        y = 50*sin(angle*PI/180);
+        y = 720/2 - y;
+        draw_pixel_at(x, y, get_vesa_color());
+        angle+=5;
         pause();
     }
+    
+    //while(1) {
+        //set_vesa_color(make_vesa_color(r, g, b));
+        //r = log2(g);
+        //g = log2(b);
+        //b = log2(r);
+        //pause();
+    //}
 
     // uint32_t low_pages = 256; // 1024 * 1024 bytes / 4096
     // uint32_t high_pages = (mi->mem_upper * 1024) / 4096;
@@ -111,14 +127,13 @@ void kernel_main(struct multiboot_info *mi) {
     //     }
     // }
     
-    move_cursor(0, 0);
-    //draw_circle(0, 0, 50);
+    // move_cursor(0, 0);
     
     
 
-    printf("Starting shell...\n");
-    shell();
-    printf("You can now safely abort the system");
+    // printf("Starting shell...\n");
+    // shell();
+    // printf("You can now safely abort the system");
 }
 
 void draw_rect(int x, int y, int w, int h) {
@@ -143,12 +158,12 @@ void draw_line(int x1, int y1, int x2, int y2) {
 }
 
 void draw_circle(int x, int y, int r) {
-    double slice = 2 * PI / 8;
-    for (size_t i = 0; i < 8; i++)
+    double slice = 2 * PI / r;
+    for (size_t i = 0; i < r; i++)
     {
         double angle = slice * i;
-        int px = x+r*cos(angle);
-        int py = y+r+sin(angle);
-        draw_pixel_at(px, py, get_vesa_color());
+        int px = x+r*sin(angle);
+        int py = y+r+cos(angle);
+        draw_line(x, y, px, py);
     }
 }
