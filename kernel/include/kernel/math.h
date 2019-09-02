@@ -2,7 +2,6 @@
 #define E 2.71828
 
 double sin (double x);
-float fsin(float x);
 float cos(float x);
 double sqrt(double n);
 int max(int a, int b);

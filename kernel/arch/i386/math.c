@@ -37,18 +37,6 @@ double sin (double x) {
 
 }
 
-float fsin(float x) {
-        float res=0, pow=x, fact=1;
-        for(int i=0; i<5; ++i)
-        {
-        res+=pow/fact;
-        pow*=-1*x*x;
-        fact*=(2*(i+1))*(2*(i+1)+1);
-        }
-
-        return res;
-}
-
 float cos(float x) {
     return sqrt(1 - pow(sin(x), 2));
 }

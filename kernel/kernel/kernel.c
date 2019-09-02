@@ -12,6 +12,8 @@
 #include <kernel/vesa.h>
 #include <kernel/utils.h>
 #include <kernel/math.h>
+#include <kernel/draw.h>
+#include <kernel/kheap.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -34,39 +36,6 @@ void show_ver() {
     set_vesa_background(make_vesa_color(0, 0, 0));
 }
 
-void draw_hello() {
-    int x_offset = 500;
-    int y_offset = 500;
-    draw_rect(x_offset, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset+40, 50, 20);
-
-
-    x_offset += 90;
-    draw_rect(x_offset-50, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset+80, 50, 20);
-    draw_rect(x_offset-50, y_offset+40, 50, 20);
-    draw_rect(x_offset-50, y_offset, 50, 20);
-
-    x_offset += 60;
-    draw_rect(x_offset-50, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset+80, 50, 20);
-
-    x_offset += 60;
-    draw_rect(x_offset-50, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset+80, 50, 20);
-
-    x_offset += 60;
-    draw_rect(x_offset, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset, 30, 100);
-    draw_rect(x_offset-50, y_offset+80, 50, 20);
-    draw_rect(x_offset-50, y_offset, 50, 20);
-
-    x_offset += 45;
-    draw_rect(x_offset, y_offset, 20, 70);
-    draw_rect(x_offset, y_offset+80, 20, 20);
-}
-
 void kernel_main(struct multiboot_info *mi) {
 	terminal_initialize();
     set_vmode(1280, 720);
@@ -75,24 +44,22 @@ void kernel_main(struct multiboot_info *mi) {
     remap_pic();
     init_idt();
 	initialize_keyboard();
+    initialize_kheap(256);
 
     printf ("Log2 of 10: %f\n", log2(10));
     printf ("2 To the power of 16: %i\n", pow(2, 16));
     printf("Max of 1, 5: %i\n", max(1, 5));
-    printf("Sin of 5: %f\n", fsin(5));
+    printf("Sin of 5: %f\n", sin(5));
 
     //set_vesa_background(make_vesa_color(255, 255, 255));
-    int r = 255;
-    int g = 255;
-    int b = 255;
     int angle = 0;
     double x, y;
 
     draw_hello();
-    draw_line(0, 720/2, 1280, 720/2);
+    draw_line(*Vector2_new(0, 720/2), *Vector2_new(1280, 720/2));
     for (size_t i = 0; i < 1280; i+=20)
     {
-        draw_rect(i, 720/2-5, 2, 10);
+        draw_rect(*Vector2_new(i, 720/2-5), 2, 10);
     }
     
     for (x = 0; x < 1280; x+=3)
@@ -134,36 +101,4 @@ void kernel_main(struct multiboot_info *mi) {
     // printf("Starting shell...\n");
     // shell();
     // printf("You can now safely abort the system");
-}
-
-void draw_rect(int x, int y, int w, int h) {
-    for (size_t i = y; i < y+h; i++)
-    {
-        for (size_t j = x; j < x+w; j++) {
-            draw_pixel_at(j, i, get_vesa_color());
-        }
-    }
-}
-
-void draw_line(int x1, int y1, int x2, int y2) {
-    int w = x2 - x1;
-    int h = y2 - y1;
-    double m = h/(double)w;
-    double j = y1;
-    for (size_t i = x1; i <= x2; i++)
-    {
-        draw_pixel_at(i, (int)j, get_vesa_color());
-        j += m;
-    }
-}
-
-void draw_circle(int x, int y, int r) {
-    double slice = 2 * PI / r;
-    for (size_t i = 0; i < r; i++)
-    {
-        double angle = slice * i;
-        int px = x+r*sin(angle);
-        int py = y+r+cos(angle);
-        draw_line(x, y, px, py);
-    }
 }

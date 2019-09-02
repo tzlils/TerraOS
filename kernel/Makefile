@@ -50,6 +50,8 @@ arch/i386/font.o \
 arch/i386/utils_asm.o \
 arch/i386/realmode.o \
 arch/i386/math.o \
+arch/i386/draw.o \
+arch/i386/geometry.o \
 
 
 OBJS=\
