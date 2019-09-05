@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "stdint.h": "c",
+        "memory.h": "c",
+        "string.h": "c",
+        "idt.h": "c",
+        "realmode.h": "c",
+        "stdio.h": "c",
+        "stdarg.h": "c",
+        "keyboard.h": "c",
+        "serial.h": "c",
+        "cstdint": "c",
+        "ctype.h": "c",
+        "limits.h": "c",
+        "wchar.h": "c",
+        "wint_t.h": "c",
+        "utils.h": "c",
+        "device.h": "c",
+        "gdt.h": "c",
+        "vesa.h": "c"
+    }
+}
