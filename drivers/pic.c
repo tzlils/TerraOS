@@ -27,7 +27,7 @@ unsigned int io_wait() {
 }
 
 void remap_pic(void) {
-    //printf("[OS] IRQ Ready\n");
+    printf("[OS] IRQ Ready\n");
 
     outb(MASTER_COMMAND, ICW1_INIT | ICW1_ICW4); // Start initialization sequence
     outb(SLAVE_COMMAND, ICW1_INIT | ICW1_ICW4);  // Start initialization sequence
@@ -42,3 +42,9 @@ void remap_pic(void) {
     outb(MASTER_DATA, 0x0);
     outb(SLAVE_DATA, 0x0);
 };
+
+void pic_send_eoi(uint8_t irq) {
+	if(irq >= 8)
+		outb(SLAVE_COMMAND, ICW4_AUTO);
+	outb(MASTER_COMMAND, ICW4_AUTO);
+}

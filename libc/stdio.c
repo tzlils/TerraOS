@@ -6,6 +6,7 @@
 #include "../include/stdint.h"
 #include "../include/tty.h"
 #include "../include/string.h"
+#include "../include/vesa.h"
 
 /*
 	Ripped from https://wiki.osdev.org/User:A22347/Printf
