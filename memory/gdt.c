@@ -1,69 +1,68 @@
 #include "../include/gdt.h"
+#include "../include/stdio.h"
 
-struct gdt_entry_struct
-{
-    uint16_t limit_low;           // The lower 16 bits of the limit.
-    uint16_t base_low;            // The lower 16 bits of the base.
-    uint8_t  base_middle;         // The next 8 bits of the base.
-    uint8_t  access;              // Access flags, determine what ring this segment can be used in.
-    uint8_t  granularity;         // low 4 bits are high 4 bits of limit
-    uint8_t  base_high;           // The last 8 bits of the base.
-} __attribute__((packed));
-typedef struct gdt_entry_struct gdt_entry_t;
+static uint32_t gdt_pointer = 0;
+static uint32_t  gdt_size = 0;
+static uint32_t gdtr_loc = 0;
 
-struct gdt_ptr_struct
-{
-    uint16_t limit;               // The upper 16 bits of all selector limits.
-    uint32_t base;                // The address of the first gdt_entry_t struct.
-}
-    __attribute__((packed));
-typedef struct gdt_ptr_struct gdt_ptr_t;
-
-extern void load_gdt(gdt_ptr_t * gdt_ptr);
-
-void gdt_set_gate(int32_t,uint32_t,uint32_t,uint8_t,uint8_t);
-
-
-gdt_entry_t gdt_entries[5];
-gdt_ptr_t   gdt_ptr;
-
-
-void init_gdt()
-{
-    gdt_ptr.limit = (sizeof(gdt_entry_t)*5) - 1;
-    gdt_ptr.base = (uint32_t)&gdt_entries;
-
-    /*
-      Pr  Priv  1   Ex  DC   RW   Ac
-      0x9A == 1001 1010  == 1   00    1   1   0    1    0
-      0x92 == 1001 0010  == 1   00    1   0   0    1    0
-      0xFA == 1111 1010  == 1   11    1   1   0    1    0
-      0xF2 == 1111 0010  == 1   11    1   0   0    1    0
-      We have page-granularity and 32-bit mode
-      G   D   0   Av
-      0xCF == 1100 1111  == 1   1   0   0  ~
-    */
-
-    gdt_set_gate(0,0,0,0,0);                    //Null segment
-    gdt_set_gate(1, 0, 0xFFFFFFFF, 0x9A, 0xCF); //Code segment
-    gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); //Data segment
-    gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); //User mode code segment
-    gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); //User mode data segment
-
-    //terminal_writestring("Flushing GDT.\n");
-    load_gdt(&gdt_ptr);
-    //printf("[OS] GDT Ready\n");
+static uint32_t highpart = 0;
+static uint32_t lowpart = 0;
+extern void _set_gdtr();
+extern void _reload_segments();
+void init_gdt() {
+	gdt_pointer = 0x806; // start GDT data at 4MB
+	printf("location of GDT: 0x%x\n", gdt_pointer);
+	gdtr_loc =    0x800;
+	printf("location of GDTR: 0x%x\n", gdtr_loc);
+	gdt_add_descriptor(0, 0);
+	gdt_add_descriptor(1, 0x00CF9A000000FFFF);
+	gdt_add_descriptor(2, 0x00CF92000000FFFF);
+	gdt_add_descriptor(3, 0x008FFA000000FFFF); // 16bit code pl3
+	gdt_set_descriptor(4, 0x008FF2000000FFFF); // 16bit data pl3
+	printf("Global Descriptor Table is alive.\n");
 }
 
-void gdt_set_gate(int32_t entry, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran)
+int gdt_set_descriptor() {
+	/* GDTR
+	 * 0-1 = SIZE - 1
+	 * 2-5 = OFFSET
+	 */
+	*(uint16_t*)gdtr_loc = (gdt_size - 1) & 0x0000FFFF;
+	gdtr_loc += 2;
+	*(uint32_t*)gdtr_loc = gdt_pointer;
+	_set_gdtr();
+	printf("GDTR was set. gdtr.size=%d gdtr.offset=0x%x\n", 
+		*(uint16_t*)(gdtr_loc-2) + 1, 
+		*(uint32_t*)gdtr_loc);
+	_reload_segments();
+	printf("Segments reloaded.\n");
+	return 0;
+}
+
+
+int gdt_add_descriptor(uint8_t id, uint64_t desc) {
+	uint32_t loc = gdt_pointer + sizeof(uint64_t)*id;
+	*(uint64_t*)loc = desc;
+	printf("Added entry %d = 0x%x << 32 | 0x%x\n", id, (*(uint64_t*)loc) >> 32, *(uint32_t*)loc+4);
+	gdt_size += sizeof(desc);
+	return 0;
+}
+
+uint64_t gdt_create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
 {
-    gdt_entries[entry].base_low = (base & 0xFFFF);
-    gdt_entries[entry].base_middle = (base >> 16) & 0xFF;
-    gdt_entries[entry].base_high = (base >> 24) & 0xFF;
+	uint64_t desc = 0;
+	highpart = 0;
+	lowpart = 0;
+	desc = limit 		& 0x000F0000;
+	desc |= (flag << 8) 	& 0x00F0FF00;
+	desc |= (base >> 16) 	& 0x000000FF;
+	desc |= base		& 0xFF000000;
+	
+	highpart = desc;
+	desc <<= 32;
 
-    gdt_entries[entry].limit_low = (limit & 0xFFFF);
-    gdt_entries[entry].granularity = (limit >> 16) & 0x0F;
-
-    gdt_entries[entry].granularity |= gran & 0xF0;
-    gdt_entries[entry].access = access;
+	desc |= base << 16;
+	desc |= limit		& 0x0000FFFF;
+	lowpart = (uint32_t)desc;
+	return desc;
 }

@@ -6,7 +6,7 @@ compile:
 	$(CC) malloc.c -o malloc.o $(CFLAGS)
 	$(CC) gdt.c -o gdt.o $(CFLAGS)
 	$(CC) paging.c -o paging.o $(CFLAGS)
-	$(AS) gdt_asm.s -o gdt_asm.o
+	$(CC) tasking.c -o tasking.o $(CFLAGS)
 
 clean:
 	rm *.o -f

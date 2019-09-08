@@ -1,5 +1,5 @@
 #include "../include/keyboard.h"
-#include "../include/isr.h"
+#include "../include/idt.h"
 #include "../include/stdio.h"
 #include "../include/device.h"
 #include "../include/memory.h"
@@ -12,7 +12,7 @@ void keyboard_handler() {
 
 void init_keyboard() {
     outb(0x64, 0xFF);
-    register_interrupt_handler(IRQ1, keyboard_handler);
+    idt_register_interrupt(IRQ1, keyboard_handler);
 
     printf("[OS] Keyboard ready\n");
     
