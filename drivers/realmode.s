@@ -140,7 +140,7 @@ section .text
         dd 0x00000000                          ; table base address
          
     gdt32_ptr:                                 ; GDT table pointer for 32bit access
-        dw 0x0000                              ; table limit (size)
+        dw 0x000                              ; table limit (size)
         dd 0x00000000                          ; table base address
          
     idt16_ptr:                                 ; IDT table pointer for 16bit access

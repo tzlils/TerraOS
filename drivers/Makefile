@@ -10,6 +10,7 @@ compile:
 	$(CC) exceptions.c -o exceptions.o $(CFLAGS)
 	$(CC) pit.c -o pit.o $(CFLAGS)
 	nasm -f elf realmode.s -o realmode.o
+	$(AS) idt.s -o idt_asm.o
 
 clean:
 	rm *.o -f

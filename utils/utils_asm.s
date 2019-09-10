@@ -1,15 +1,30 @@
-.section .text
-.global fastcp
+section .text
+global fastcp, halt, pause
 
-.type fastcp, @function
-    # void fastcp(char *dest, char *src, uint32_t count)
 fastcp:
-    pushl   %esi
-    pushl   %edi
-    movl    12(%esp), %edi # dest
-    movl    16(%esp), %esi # src
-    movl    20(%esp), %ecx # count
+    push   esi
+    push   edi
+    mov    esp, edi
+    mov    esp, esi
+    mov    esp, ecx
     rep     movsb
-    popl    %edi
-    popl    %esi
+    pop    edi
+    pop    esi
+    ret
+
+halt:
+    cli
+    hlt
+
+pause:
+    hlt
+    ret
+
+sys_cli:
+    hlt
+    ret
+
+
+sys_sti:
+    hlt
     ret

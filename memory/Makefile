@@ -7,6 +7,7 @@ compile:
 	$(CC) gdt.c -o gdt.o $(CFLAGS)
 	$(CC) paging.c -o paging.o $(CFLAGS)
 	$(CC) tasking.c -o tasking.o $(CFLAGS)
+	nasm -felf gdt.s -o gdt_asm.o
 
 clean:
 	rm *.o -f
