@@ -29,7 +29,6 @@ typedef struct {
 
 void init_idt();
 void idt_register_interrupt(uint8_t i, uint32_t addr);
-void idt_dummy_handler();
 
 #define INT_START asm volatile("pusha");
 #define INT_END asm volatile("popa"); \

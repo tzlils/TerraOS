@@ -1,6 +1,5 @@
 #include "include/tty.h"
 #include "include/stdio.h"
-#include "include/vesa.h"
 #include "include/gdt.h"
 #include "include/pic.h"
 #include "include/idt.h"
@@ -17,23 +16,23 @@ extern "C" /* Use C linkage for kernel_main. */
 
 extern uint32_t kernel_end;
 extern uint32_t kernel_base;
+extern void _long_mode_init();
 
 void kernel_main() {
-
     terminal_initialize();
     // set_vmode(1280, 720);
     move_cursor(0, 0);
     printf("Hello world!\n\n");
     
     init_memory(&kernel_end);
+
+    init_paging();
+    _long_mode_init();
     init_gdt();
     init_idt();
-    init_exceptions();
+    // init_exceptions();
     // remap_pic();
     // init_pit();
-
-    // asm volatile("sti");
-    // init_paging();
     // init_tasking();
 
     //Go up to kernel_end

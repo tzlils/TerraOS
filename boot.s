@@ -1,131 +1,85 @@
-# Declare constants for the multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
+bits 32
+global _start, _long_mode_init, end_of_kernel
 
-# Declare a header as in the Multiboot Standard.
-.section .multiboot
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+section .data
+MBALIGN		equ  1<<0             ; align loaded modules on page boundaries
+MEMINFO		equ  1<<1             ; provide memory map
+FLAGS		equ  MBALIGN | MEMINFO  ; this is the Multiboot 'flag' field
+MAGIC		equ  0x1BADB002       ; 'magic number' lets bootloader find the header
+CHECKSUM	equ -(MAGIC + FLAGS) ; checksum of above, to prove we are multiboot
 
-# Reserve a stack for the initial thread.
-.section .bss
-.align 16
+section .multiboot
+align 4
+	dd MAGIC
+	dd FLAGS
+	dd CHECKSUM
+
+
+section .bss
 stack_bottom:
-.skip 16384 
+resb 32768 
 stack_top:
 
+%define kernel_phys_offset 0xffffffffc0000000
+extern gdt_ptr
+extern kernel_main
 
-.section .text
-.global _start
-.type _start, @function
+
+section .kpd
+align 4
+_kernel_pd:
+   resb 4
+_kernel_page_tables:    ; I am creating 256 page tables here
+   resb 4   
+
+section .text
 _start:
-	movl $stack_top, %esp
-
-	# Call the global constructors.
-	# call _init
-
-	# Transfer control to the main kernel.
-	# sti 
-	pushl %ebx
+	mov esp, stack_top
 	call kernel_main
 
-	# Hang if kernel_main unexpectedly returns.
+	; # Call the global constructors.
+	; # call _init
+
+	; # Transfer control to the main kernel.
+	; # sti 
+	; # sysenter
+
+
+	; # Hang if kernel_main unexpectedly returns.
 	cli
 	hlt
 
-1:	hlt
-	jmp 1b
-
-.global __idt_default_handler
-.type __idt_default_handler, @function
-__idt_default_handler:
-	pushal
-	mov $0x20, %al
-	mov $0x20, %dx
-	out %al, %dx
-	popal
-	iretl
-
-
-.global _set_idtr
-.type _set_idtr, @function
-_set_idtr:
-	push %ebp
-	movl %esp, %ebp
-
-	lidt 0x10F0
-
-	movl %ebp, %esp
-	pop %ebp
-	ret
-	
-.global _set_gdtr
-.type _set_gdtr, @function
-_set_gdtr:
-	push %ebp
-	movl %esp, %ebp
-
-	lgdt 0x800
-
-	movl %ebp, %esp
-	pop %ebp
-	ret
-
-.global _reload_segments
-.type _reload_segments, @function
-_reload_segments:
-	push %ebp
-	movl %esp, %ebp
-
-	push %eax
-	mov $0x10, %ax
-	mov %ax, %ds
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
-	mov %ax, %ss
-	pop %eax
-
-	ljmp $0x8, $me
-me:
-	movl %ebp, %esp
-	pop %ebp
-	ret
-
-	
-.global halt
-halt:
-    cli
-    hlt
-
-.section .text
-.global pause
-.type pause @function
-pause:
-    hlt
-    ret
-
-.section .text
-.global sys_cli
-.type sys_cli @function
-sys_cli:
-    hlt
-    ret
+_long_mode_init:
+	mov cr0, eax
+	and eax, 0xa7fffffff
+	mov eax, cr0
+	mov eax, 1<<5 | 1<<7
+	mov cr4, eax
+	mov eax, 0x70000
+	mov cr3, eax
+	mov ecx, 0xc0000080
+	rdmsr
+	or eax, 1 << 8
+	wrmsr
+	mov ebx, cr0
+	or ebx, 1<<31 | 1<<0
+	mov cr0, ebx
 
 
-.section .text
-.global sys_sti
-.type sys_sti @function
-sys_sti:
-    hlt
-    ret
-.size _start, . - _start
+	bits 64
+	mov ax, 0x0
+	mov ss, ax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 
-.section .kend
-.global end_of_kernel
+	mov rax, .higher_half
+	jmp rax
+
+.higher_half:
+	mov rsp, kernel_phys_offset + 0xeffff0
+
+	lgdt [gdt_ptr]
+section .kend
 end_of_kernel:

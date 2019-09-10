@@ -1,5 +1,6 @@
 CC=i686-elf-gcc
-AS=i686-elf-as
+#AS=i686-elf-as
+AS=nasm -f elf 
 CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
 KERNEL_OBJS=\
@@ -15,17 +16,19 @@ drivers/device.o \
 drivers/keyboard.o \
 drivers/exceptions.o \
 drivers/pit.o \
+drivers/idt_asm.o \
 utils/utils.o \
 utils/utils_asm.o \
 memory/gdt.o \
 memory/malloc.o \
 memory/paging.o \
 memory/tasking.o \
+memory/gdt_asm.o \
 display/tty.o \
 display/font.o \
 display/vesa.o \
 
-all: compile link iso clean
+all: compile link iso
 start: start-32
 
 start-32:
@@ -33,6 +36,9 @@ start-32:
 
 start-64:
 	qemu-system-x86_64 terraos.iso
+
+bochs-ui:
+	bochs 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted' 'display_library: x, options="gui_debug"'
 
 bochs:
 	bochs 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted'
