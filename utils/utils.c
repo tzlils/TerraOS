@@ -98,3 +98,7 @@ void ftoa(float n, char *res, int afterpoint)
         _itoa((int)fpart, res + i + 1, afterpoint); 
     } 
 } 
+
+void breakpoint() {
+    asm volatile("xchg %bx, %bx");
+}

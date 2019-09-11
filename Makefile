@@ -38,10 +38,10 @@ start-64:
 	qemu-system-x86_64 terraos.iso
 
 bochs-ui:
-	bochs 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted' 'display_library: x, options="gui_debug"'
+	bochs 'magic_break: enabled=1' 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted' 'display_library: x, options="gui_debug"'
 
 bochs:
-	bochs 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted'
+	bochs 'magic_break: enabled=1' 'boot:cdrom' 'ata0-slave: type=cdrom, path=terraos.iso, status=inserted'
 
 iso:
 	mkdir -p isodir/boot/grub

@@ -9,27 +9,12 @@ gdt_ptr:
 align 16
 .gdt_start:
     .null_descriptor:
-        dw 0x0000            
-        dw 0x0000            
-        db 0x00              
-        db 00000000b         
-        db 00000000b         
-        db 0x00              
+        dq 0x0000000000000000       
 
 
     .kernel_code_64:
-        dw 0x0000            
-        dw 0x0000            
-        db 0x00              
-        db 10011010b         
-        db 00100000b         
-        db 0x00              
+        dq 0x00209A0000000000  
 
     .kernel_data:
-        dw 0x0000            
-        dw 0x0000            
-        db 0x00              
-        db 10010010b         
-        db 00000000b         
-        db 0x00              
+        dq 0x0000920000000000           
 .gdt_end:
