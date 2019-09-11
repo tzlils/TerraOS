@@ -15,7 +15,7 @@ void NMI() {
     printf("NMI!\N");
 }
 
-void breakpoint() {
+void exc_breakpoint() {
     printf("Breakpoint!\n");
 }
 
@@ -71,7 +71,7 @@ void init_exceptions() {
     idt_register_interrupt(0, (uint32_t)divide_by_zero);
     idt_register_interrupt(1, (uint32_t)debug);
     idt_register_interrupt(2, (uint32_t)NMI);
-    idt_register_interrupt(3, (uint32_t)breakpoint);
+    idt_register_interrupt(3, (uint32_t)exc_breakpoint);
     idt_register_interrupt(4, (uint32_t)overflow);
     idt_register_interrupt(5, (uint32_t)bound_range);
     idt_register_interrupt(6, (uint32_t)invalid_opcode);

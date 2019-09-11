@@ -10,6 +10,7 @@ typedef struct {
 } alloc_t;
 
 extern void init_paging();
+extern void paging_enable();
 void init_memory(uint32_t kernel_end);
 extern char* malloc(size_t size);
 extern void free(void *mem);

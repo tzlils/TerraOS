@@ -1,5 +1,15 @@
 bits 32
-global _start, _long_mode_init, end_of_kernel
+global _start, _long_mode_init, _loop_page_tables, end_of_kernel
+
+%define KERNEL_VIRTUAL_BASE 0xFFFFFFFF80000000
+%define kernel_phys_offset 0xffffffffc0000000
+%define PAGE_PRESENT    (1 << 0)
+%define PAGE_WRITE      (1 << 1)
+%define CODE_SEG     0x0008
+%define DATA_SEG     0x0010
+extern early_main
+extern gdt_ptr  
+extern kernel_main
 
 section .data
 MBALIGN		equ  1<<0             ; align loaded modules on page boundaries
@@ -7,6 +17,7 @@ MEMINFO		equ  1<<1             ; provide memory map
 FLAGS		equ  MBALIGN | MEMINFO  ; this is the Multiboot 'flag' field
 MAGIC		equ  0x1BADB002       ; 'magic number' lets bootloader find the header
 CHECKSUM	equ -(MAGIC + FLAGS) ; checksum of above, to prove we are multiboot
+jmp_up	 	equ (_long_mode_init - KERNEL_VIRTUAL_BASE)
 
 section .multiboot
 align 4
@@ -20,22 +31,14 @@ stack_bottom:
 resb 32768 
 stack_top:
 
-%define kernel_phys_offset 0xffffffffc0000000
-extern gdt_ptr
-extern kernel_main
-
-
-section .kpd
-align 4
-_kernel_pd:
-   resb 4
-_kernel_page_tables:    ; I am creating 256 page tables here
-   resb 4   
-
 section .text
+ALIGN 4
+IDT:
+    .Length       dw 0
+    .Base         dd 0    
 _start:
 	mov esp, stack_top
-	call kernel_main
+	call early_main
 
 	; # Call the global constructors.
 	; # call _init
@@ -48,38 +51,58 @@ _start:
 	; # Hang if kernel_main unexpectedly returns.
 	cli
 	hlt
+	
+_loop_page_tables:
+	mov [0x400000], eax
+	add eax, 0x1000
+	add di, 8
+	cmp eax, 0x200000
+	jb _loop_page_tables
+
+	pop di
+	mov al, 0xFF
+	out 0xA1, al
+	out 0x21, al
+	nop
+	nop
+
+	lidt [IDT]
+
+	mov eax, 10100000b
+	mov cr4, eax
+
+	mov edx, edi
+	mov cr3, edx
+
+	mov ecx, 0xC0000080
+	rdmsr
+	or eax, 0x00000100
+	wrmsr
+
+	xchg bx, bx
+	lgdt [gdt_ptr]
+
+	mov ebx, cr0
+	or ebx, 0x80000001
+	mov cr0, ebx
+	
+	jmp CODE_SEG:jmp_up
 
 _long_mode_init:
-	mov cr0, eax
-	and eax, 0xa7fffffff
-	mov eax, cr0
-	mov eax, 1<<5 | 1<<7
-	mov cr4, eax
-	mov eax, 0x70000
-	mov cr3, eax
-	mov ecx, 0xc0000080
-	rdmsr
-	or eax, 1 << 8
-	wrmsr
-	mov ebx, cr0
-	or ebx, 1<<31 | 1<<0
-	mov cr0, ebx
-
-
 	bits 64
-	mov ax, 0x0
-	mov ss, ax
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
 
 	mov rax, .higher_half
 	jmp rax
 
 .higher_half:
 	mov rsp, kernel_phys_offset + 0xeffff0
+	jmp kernel_main
 
-	lgdt [gdt_ptr]
 section .kend
 end_of_kernel:

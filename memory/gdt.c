@@ -7,7 +7,6 @@ static uint32_t gdtr_loc = 0;
 
 static uint32_t highpart = 0;
 static uint32_t lowpart = 0;
-extern void _set_gdtr();
 extern void _reload_segments();
 void init_gdt() {
 	gdt_pointer = 0x806; // start GDT data at 4MB
@@ -29,7 +28,7 @@ int gdt_set_descriptor() {
 	*(uint16_t*)gdtr_loc = (gdt_size - 1) & 0x0000FFFF;
 	gdtr_loc += 2;
 	*(uint32_t*)gdtr_loc = gdt_pointer;
-	//_set_gdtr();
+	asm volatile("lgdt 0x800");
 	printf("GDTR was set. gdtr.size=%d gdtr.offset=0x%x\n", 
 		*(uint16_t*)(gdtr_loc-2) + 1, 
 		*(uint32_t*)gdtr_loc);
