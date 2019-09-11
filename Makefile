@@ -24,6 +24,7 @@ memory/malloc.o \
 memory/paging.o \
 memory/tasking.o \
 memory/gdt_asm.o \
+memory/paging_asm.o \
 display/tty.o \
 display/font.o \
 display/vesa.o \

@@ -1,7 +1,6 @@
 bits 32
 global _start, _long_mode_init, _loop_page_tables, end_of_kernel
 
-%define KERNEL_VIRTUAL_BASE 0xFFFFFFFF80000000
 %define kernel_phys_offset 0xffffffffc0000000
 %define PAGE_PRESENT    (1 << 0)
 %define PAGE_WRITE      (1 << 1)
@@ -9,7 +8,10 @@ global _start, _long_mode_init, _loop_page_tables, end_of_kernel
 %define DATA_SEG     0x0010
 extern early_main
 extern gdt_ptr  
+extern gdt_ptr_lowerhalf
 extern kernel_main
+extern paging_init
+extern page_tables
 
 section .data
 MBALIGN		equ  1<<0             ; align loaded modules on page boundaries
@@ -17,7 +19,7 @@ MEMINFO		equ  1<<1             ; provide memory map
 FLAGS		equ  MBALIGN | MEMINFO  ; this is the Multiboot 'flag' field
 MAGIC		equ  0x1BADB002       ; 'magic number' lets bootloader find the header
 CHECKSUM	equ -(MAGIC + FLAGS) ; checksum of above, to prove we are multiboot
-jmp_up	 	equ (_long_mode_init - KERNEL_VIRTUAL_BASE)
+jmp_up	 	equ (_long_mode_init - kernel_phys_offset)
 
 section .multiboot
 align 4
@@ -36,9 +38,13 @@ ALIGN 4
 IDT:
     .Length       dw 0
     .Base         dd 0    
+
 _start:
 	mov esp, stack_top
-	call early_main
+	call paging_init
+	lgdt [gdt_ptr_lowerhalf - kernel_phys_offset]
+	jmp 0x08:_long_mode_init - kernel_phys_offset
+	; call early_main
 
 	; # Call the global constructors.
 	; # call _init
@@ -51,42 +57,6 @@ _start:
 	; # Hang if kernel_main unexpectedly returns.
 	cli
 	hlt
-	
-_loop_page_tables:
-	mov [0x400000], eax
-	add eax, 0x1000
-	add di, 8
-	cmp eax, 0x200000
-	jb _loop_page_tables
-
-	pop di
-	mov al, 0xFF
-	out 0xA1, al
-	out 0x21, al
-	nop
-	nop
-
-	lidt [IDT]
-
-	mov eax, 10100000b
-	mov cr4, eax
-
-	mov edx, edi
-	mov cr3, edx
-
-	mov ecx, 0xC0000080
-	rdmsr
-	or eax, 0x00000100
-	wrmsr
-
-	xchg bx, bx
-	lgdt [gdt_ptr]
-
-	mov ebx, cr0
-	or ebx, 0x80000001
-	mov cr0, ebx
-	
-	jmp CODE_SEG:jmp_up
 
 _long_mode_init:
 	bits 64
@@ -102,7 +72,8 @@ _long_mode_init:
 
 .higher_half:
 	mov rsp, kernel_phys_offset + 0xeffff0
-	jmp kernel_main
+	lgdt [gdt_ptr]
+	call kernel_main
 
 section .kend
 end_of_kernel:

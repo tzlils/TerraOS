@@ -8,6 +8,7 @@ compile:
 	$(CC) paging.c -o paging.o $(CFLAGS)
 	$(CC) tasking.c -o tasking.o $(CFLAGS)
 	nasm -felf gdt.s -o gdt_asm.o
+	nasm -felf paging.s -o paging_asm.o
 
 clean:
 	rm *.o -f

@@ -1,7 +1,14 @@
 bits 64
-global gdt_ptr
+global gdt_ptr, gdt_ptr_lowerhalf
+%define kernel_phys_offset 0xffffffffc0000000
 section .data
 
+align 16
+gdt_ptr_lowerhalf:
+    dw gdt_ptr.gdt_end - gdt_ptr.gdt_start - 1  ; GDT size
+    dd gdt_ptr.gdt_start - kernel_phys_offset  ; GDT start
+    
+align 16
 gdt_ptr:
     dw .gdt_end - .gdt_start - 1  ; GDT size
     dq .gdt_start                 ; GDT start

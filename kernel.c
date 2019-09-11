@@ -22,11 +22,11 @@ extern void _loop_page_tables();
 
 void early_main() {
     terminal_initialize();
-    init_paging();
+    // init_paging();
 
     // breakpoint();
-    _loop_page_tables();
-    kernel_main();
+    // _loop_page_tables();
+    // kernel_main();
 }
 
 void kernel_main() {
