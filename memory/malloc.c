@@ -5,6 +5,10 @@
 #include "../include/stdio.h"
 
 #define MAX_PAGE_ALIGNED_ALLOCS 32
+#define PAGE_SIZE ((size_t)4096)
+#define PAGE_TABLE_ENTRIES 512
+#define KERNEL_PHYS_OFFSET ((size_t)0xffffffffc0000000)
+
 uint32_t last_alloc = 0;
 uint32_t heap_end = 0;
 uint32_t heap_begin = 0;

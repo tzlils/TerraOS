@@ -12,6 +12,7 @@ compile:
 	$(CC) pit.c -o pit.o $(CFLAGS)
 	# $(AS) realmode.s -o realmode.o $(ASFLAGS)
 	$(AS) idt.s -o idt_asm.o $(ASFLAGS)
+	$(CC) irq.c -o irq.o $(CFLAGS)
 
 clean:
 	rm *.o -f

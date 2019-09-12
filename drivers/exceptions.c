@@ -68,21 +68,21 @@ void reserved() {
 }
 
 void init_exceptions() {
-    idt_register_interrupt(0, (uint32_t)divide_by_zero);
-    idt_register_interrupt(1, (uint32_t)debug);
-    idt_register_interrupt(2, (uint32_t)NMI);
-    idt_register_interrupt(3, (uint32_t)exc_breakpoint);
-    idt_register_interrupt(4, (uint32_t)overflow);
-    idt_register_interrupt(5, (uint32_t)bound_range);
-    idt_register_interrupt(6, (uint32_t)invalid_opcode);
-    idt_register_interrupt(7, (uint32_t)device_not_available);
-    idt_register_interrupt(8, (uint32_t)double_fault);
-    idt_register_interrupt(9, (uint32_t)coproccesor_fault);
-    idt_register_interrupt(10, (uint32_t)invalid_tss);
-    idt_register_interrupt(11, (uint32_t)segment_not_present);
-    idt_register_interrupt(12, (uint32_t)stacksegment_fault);
-    idt_register_interrupt(13, (uint32_t)general_protection_fault);
-    idt_register_interrupt(14, (uint32_t)page_fault);
-    idt_register_interrupt(15, (uint32_t)reserved);
+    register_interrupt_handler(0, divide_by_zero, 0, 0x8e);
+    register_interrupt_handler(1, debug, 0, 0x8e);
+    register_interrupt_handler(2, NMI, 0, 0x8e);
+    register_interrupt_handler(3, exc_breakpoint, 0, 0x8e);
+    register_interrupt_handler(4, overflow, 0, 0x8e);
+    register_interrupt_handler(5, bound_range, 0, 0x8e);
+    register_interrupt_handler(6, invalid_opcode, 0, 0x8e);
+    register_interrupt_handler(7, device_not_available, 0, 0x8e);
+    register_interrupt_handler(8, double_fault, 0, 0x8e);
+    register_interrupt_handler(9, coproccesor_fault, 0, 0x8e);
+    register_interrupt_handler(10, invalid_tss, 0, 0x8e);
+    register_interrupt_handler(11, segment_not_present, 0, 0x8e);
+    register_interrupt_handler(12, stacksegment_fault, 0, 0x8e);
+    register_interrupt_handler(13, general_protection_fault, 0, 0x8e);
+    register_interrupt_handler(14, page_fault, 0, 0x8e);
+    register_interrupt_handler(15, reserved, 0, 0x8e);
     printf("[OS] Exceptions ready\n");
 }

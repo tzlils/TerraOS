@@ -1,5 +1,6 @@
 #include "../include/stdint.h"
 #include "../include/stdio.h"
+#include "../include/utils.h"
 
 static uint32_t* page_directory = 0;
 static uint32_t page_dir_loc = 0;
@@ -39,7 +40,7 @@ void init_paging()
 	paging_map_virtual_to_phys(0, 0);
 	paging_map_virtual_to_phys(0x400000, 0x400000);
 	// paging_enable();
-	// printf("Paging was successfully enabled!\n");
+	printf("Paging was successfully enabled!\n");
 }
 
 /*

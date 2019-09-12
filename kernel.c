@@ -9,6 +9,7 @@
 #include "include/exceptions.h"
 #include "include/pit.h"
 #include "include/utils.h"
+#include "include/irq.h"
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -16,7 +17,7 @@ extern "C" /* Use C linkage for kernel_main. */
 
 
 extern uint32_t kernel_end;
-extern uint32_t kernel_base;
+extern uint32_t KERNEL_VIRTUAL_BASE;
 
 void kernel_main() {    
     terminal_initialize();
@@ -25,16 +26,19 @@ void kernel_main() {
     printf("Hello world!\n\n");
     
     // init_memory(&kernel_end);
+
+    // init_paging();
     remap_pic();
-    breakpoint();
     init_idt();
-    while(1) asm volatile("hlt");
-    // init_exceptions();
-    // init_pit();
+    init_irq();
+
+    // init_dev();
+    init_keyboard();
+    init_pit();
+    while(1) {}
     // init_tasking();
 
     //Go up to kernel_end
-    // init_dev();
 
     // init_keyboard();
     // printf("\nEverything is initialized\n\n");
@@ -43,6 +47,6 @@ void kernel_main() {
     //pci_probe();
 }
 
-void late_init() {
+void late_main() {
     printf("REACHED LATE INIT!!");
 }
