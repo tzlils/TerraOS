@@ -1,24 +1,21 @@
 
-.section .text
-.global __idt_default_handler
-.type __idt_default_handler, @function
+global __idt_default_handler, _set_idtr
+section .text
 __idt_default_handler:
 	pushal
-	mov $0x20, %al
-	mov $0x20, %dx
-	out %al, %dx
+	mov [0x20], al
+	mov [0x20], dx
+	; out al, dx
 	popal
 	iretl
 
 
-.global _set_idtr
-.type _set_idtr, @function
 _set_idtr:
-	push %ebp
-	movl %esp, %ebp
+	; push ebp
+	mov esp, ebp
 
-	lidt 0x10f0
+	; lidt 0x10f0
 
-	movl %ebp, %esp
-	pop %ebp
+	mov ebp, esp
+	; pop ebp
 	ret

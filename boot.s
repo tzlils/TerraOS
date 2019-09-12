@@ -13,7 +13,6 @@ extern kernel_main
 extern paging_init
 extern page_tables
 
-section .data
 MBALIGN		equ  1<<0             ; align loaded modules on page boundaries
 MEMINFO		equ  1<<1             ; provide memory map
 FLAGS		equ  MBALIGN | MEMINFO  ; this is the Multiboot 'flag' field
@@ -21,29 +20,23 @@ MAGIC		equ  0x1BADB002       ; 'magic number' lets bootloader find the header
 CHECKSUM	equ -(MAGIC + FLAGS) ; checksum of above, to prove we are multiboot
 jmp_up	 	equ (_long_mode_init - kernel_phys_offset)
 
-section .multiboot
+section .multiboot.data
 align 4
 	dd MAGIC
 	dd FLAGS
 	dd CHECKSUM
 
-
-section .bss
-stack_bottom:
-resb 32768 
-stack_top:
-
-section .text
+section .multiboot.text
 ALIGN 4
 IDT:
     .Length       dw 0
     .Base         dd 0    
 
 _start:
-	mov esp, stack_top
+	mov esp, stack_top - kernel_phys_offset
+	lgdt [gdt_ptr_lowerhalf]
 	call paging_init
-	lgdt [gdt_ptr_lowerhalf - kernel_phys_offset]
-	jmp 0x08:_long_mode_init - kernel_phys_offset
+	jmp 0x08:_long_mode_init
 	; call early_main
 
 	; # Call the global constructors.
@@ -60,20 +53,25 @@ _start:
 
 _long_mode_init:
 	bits 64
-    mov ax, DATA_SEG
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
+	mov ax, DATA_SEG
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
 
-	mov rax, .higher_half
-	jmp rax
-
-.higher_half:
-	mov rsp, kernel_phys_offset + 0xeffff0
+	add rsp, kernel_phys_offset
 	lgdt [gdt_ptr]
-	call kernel_main
+
+	mov rax, kernel_main
+	call rax
+	cli
+	hlt
+
+section .bss
+stack_bottom:
+	resb 32768
+stack_top:
 
 section .kend
 end_of_kernel:

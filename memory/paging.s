@@ -15,7 +15,7 @@ page_tables:
         resb 4096 * 16      ; 16 page tables == 32 MiB mapped
 .end:
 
-section .text
+section .multiboot.text
 bits 32
 
 paging_init:

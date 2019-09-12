@@ -20,11 +20,11 @@ void enable_task() {
 
 void pit_irq() {
 	if(!task) {
-		asm volatile("add $0x1c, %esp");
-		asm volatile("pusha");
-		send_eoi(0);
-		asm volatile("popa");
-		asm volatile("iret");
+		// asm volatile("add $0x1c, %esp");
+		// asm volatile("pusha");
+		// send_eoi(0);
+		// asm volatile("popa");
+		// asm volatile("iret");
 	} else {
 		//asm volatile("add $0x1c, %esp");
 		schedule();

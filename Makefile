@@ -1,7 +1,8 @@
-CC=i686-elf-gcc
-#AS=i686-elf-as
-AS=nasm -f elf 
-CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+CC=x86_64-elf-gcc
+AS=nasm
+CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mcmodel=kernel
+ASFLAGS=-f elf64
+LINKERFLAGS=-z max-page-size=0x1000 -Wl,--build-id=none -ffreestanding -O2 -nostdlib
 
 KERNEL_OBJS=\
 boot.o \
@@ -11,7 +12,6 @@ libc/stdio.o \
 io/serial.o \
 drivers/idt.o \
 drivers/pic.o \
-drivers/realmode.o \
 drivers/device.o \
 drivers/keyboard.o \
 drivers/exceptions.o \
@@ -27,8 +27,9 @@ memory/gdt_asm.o \
 memory/paging_asm.o \
 display/tty.o \
 display/font.o \
-display/vesa.o \
 
+#drivers/realmode.o
+#display/vesa.o
 all: compile link iso
 start: start-32
 
@@ -53,7 +54,7 @@ iso:
 
 
 compile:
-	$(AS) boot.s -o boot.o
+	$(AS) boot.s -o boot.o $(ASFLAGS)
 	$(CC) kernel.c -o kernel.o $(CFLAGS)
 	cd libc && make compile
 	cd io && make compile
@@ -63,7 +64,7 @@ compile:
 	cd display && make compile
 
 link:
-	$(CC) -T linker.ld -o terraos.bin -ffreestanding -O2 -nostdlib $(KERNEL_OBJS)  -lgcc
+	$(CC) -T linker.ld -o terraos.bin $(LINKERFLAGS) $(KERNEL_OBJS)  -lgcc
 
 clean:
 	cd libc && make clean

@@ -2,6 +2,7 @@
 #include "../include/memory.h"
 #include "../include/tasking.h"
 #include "../include/stdio.h"
+#include "../include/utils.h"
 
 
 extern void _set_idtr();
@@ -50,7 +51,8 @@ void init_idt() {
 	load_idt();
 	printf("IDTR set, testing link.\n");
 
-	// asm volatile("sti");
+	
+	asm volatile("sti");
 	asm volatile("int $0x2f");
 	while(test_timeout-- != 0)
 	{
