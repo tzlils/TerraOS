@@ -1,6 +1,7 @@
-CC=i686-elf-gcc
-AS=i686-elf-as
-CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+CC=x86_64-elf-gcc
+AS=nasm
+CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mcmodel=kernel
+ASFLAGS=-f elf64
 
 compile:
 	$(CC) idt.c -o idt.o $(CFLAGS)
@@ -9,8 +10,8 @@ compile:
 	$(CC) keyboard.c -o keyboard.o $(CFLAGS)
 	$(CC) exceptions.c -o exceptions.o $(CFLAGS)
 	$(CC) pit.c -o pit.o $(CFLAGS)
-	nasm -f elf realmode.s -o realmode.o
-	$(AS) idt.s -o idt_asm.o
+	# $(AS) realmode.s -o realmode.o $(ASFLAGS)
+	$(AS) idt.s -o idt_asm.o $(ASFLAGS)
 
 clean:
 	rm *.o -f

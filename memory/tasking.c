@@ -17,7 +17,7 @@ process* create_process(char* name, uint32_t addr) {
     p->eip = addr;
     p->state = STATE_ALIVE;
     p->esp = (uint32_t)malloc(4096);
-    asm volatile("mov %%cr3, %%eax":"=a"(p->cr3));
+    // asm volatile("mov %%cr3, %%eax":"=a"(p->cr3));
     uint32_t* stack = (uint32_t *)(p->esp + 4096);
     p->stacktop = p->esp;
 	*--stack = 0x00000202; // eflags
@@ -51,34 +51,34 @@ void add_process(process* p) {
 
 void schedule() {
 	//asm volatile("add $0xc, %esp");
-	asm volatile("push %eax");
-	asm volatile("push %ebx");
-	asm volatile("push %ecx");
-	asm volatile("push %edx");
-	asm volatile("push %esi");
-	asm volatile("push %edi");
-	asm volatile("push %ebp");
-	asm volatile("push %ds");
-	asm volatile("push %es");
-	asm volatile("push %fs");
-	asm volatile("push %gs");
-	asm volatile("mov %%esp, %%eax":"=a"(c->esp));
-	c = c->next;
-	asm volatile("mov %%eax, %%cr3": :"a"(c->cr3));
-	asm volatile("mov %%eax, %%esp": :"a"(c->esp));
-	asm volatile("pop %gs");
-	asm volatile("pop %fs");
-	asm volatile("pop %es");
-	asm volatile("pop %ds");
-	asm volatile("pop %ebp");
-	asm volatile("pop %edi");
-	asm volatile("pop %esi");
-	asm volatile("out %%al, %%dx": :"d"(0x20), "a"(0x20)); // send EoI to master PIC
-	asm volatile("pop %edx");
-	asm volatile("pop %ecx");
-	asm volatile("pop %ebx");
-	asm volatile("pop %eax");
-	asm volatile("iret");
+	// asm volatile("push %eax");
+	// asm volatile("push %ebx");
+	// asm volatile("push %ecx");
+	// asm volatile("push %edx");
+	// asm volatile("push %esi");
+	// asm volatile("push %edi");
+	// asm volatile("push %ebp");
+	// asm volatile("push %ds");
+	// asm volatile("push %es");
+	// asm volatile("push %fs");
+	// asm volatile("push %gs");
+	// asm volatile("mov %%esp, %%eax":"=a"(c->esp));
+	// c = c->next;
+	// asm volatile("mov %%eax, %%cr3": :"a"(c->cr3));
+	// asm volatile("mov %%eax, %%esp": :"a"(c->esp));
+	// asm volatile("pop %gs");
+	// asm volatile("pop %fs");
+	// asm volatile("pop %es");
+	// asm volatile("pop %ds");
+	// asm volatile("pop %ebp");
+	// asm volatile("pop %edi");
+	// asm volatile("pop %esi");
+	// asm volatile("out %%al, %%dx": :"d"(0x20), "a"(0x20)); // send EoI to master PIC
+	// asm volatile("pop %edx");
+	// asm volatile("pop %ecx");
+	// asm volatile("pop %ebx");
+	// asm volatile("pop %eax");
+	// asm volatile("iret");
 }
 
 void schedule_noirq()
@@ -90,19 +90,19 @@ void schedule_noirq()
 
 void __exec()
 {
-	asm volatile("mov %%eax, %%esp": :"a"(c->esp));
-	asm volatile("pop %gs");
-	asm volatile("pop %fs");
-	asm volatile("pop %es");
-	asm volatile("pop %ds");
-	asm volatile("pop %ebp");
-	asm volatile("pop %edi");
-	asm volatile("pop %esi");
-	asm volatile("pop %edx");
-	asm volatile("pop %ecx");
-	asm volatile("pop %ebx");
-	asm volatile("pop %eax");
-	asm volatile("iret");
+	// asm volatile("mov %%eax, %%esp": :"a"(c->esp));
+	// asm volatile("pop %gs");
+	// asm volatile("pop %fs");
+	// asm volatile("pop %es");
+	// asm volatile("pop %ds");
+	// asm volatile("pop %ebp");
+	// asm volatile("pop %edi");
+	// asm volatile("pop %esi");
+	// asm volatile("pop %edx");
+	// asm volatile("pop %ecx");
+	// asm volatile("pop %ebx");
+	// asm volatile("pop %eax");
+	// asm volatile("iret");
 }
 
 

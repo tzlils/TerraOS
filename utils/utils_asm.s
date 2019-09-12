@@ -2,14 +2,14 @@ section .text
 global fastcp, halt, pause
 
 fastcp:
-    push   esi
-    push   edi
-    mov    esp, edi
-    mov    esp, esi
-    mov    esp, ecx
-    rep     movsb
-    pop    edi
-    pop    esi
+    ; push   esi
+    ; push   edi
+    ; mov    esp, edi
+    ; mov    esp, esi
+    ; mov    esp, ecx
+    ; rep     movsb
+    ; pop    edi
+    ; pop    esi
     ret
 
 halt:

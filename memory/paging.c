@@ -20,10 +20,10 @@ void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys)
 
 void paging_enable()
 {
-	asm volatile("mov %%eax, %%cr3": :"a"(page_dir_loc));	
-	asm volatile("mov %cr0, %eax");
-	asm volatile("orl $0x80000000, %eax");
-	asm volatile("mov %eax, %cr0");
+	// asm volatile("mov %%eax, %%cr3": :"a"(page_dir_loc));	
+	// asm volatile("mov %cr0, %eax");
+	// asm volatile("orl $0x80000000, %eax");
+	// asm volatile("mov %eax, %cr0");
 }
 
 void init_paging()

@@ -17,30 +17,19 @@ extern "C" /* Use C linkage for kernel_main. */
 
 extern uint32_t kernel_end;
 extern uint32_t kernel_base;
-extern void _long_mode_init();
-extern void _loop_page_tables();
 
-void early_main() {
+void kernel_main() {    
     terminal_initialize();
-    // init_paging();
-
-    // breakpoint();
-    // _loop_page_tables();
-    // kernel_main();
-}
-
-void kernel_main() {
     // set_vmode(1280, 720);
     move_cursor(0, 0);
     printf("Hello world!\n\n");
     
-    init_memory(&kernel_end);
-
-    // init_paging();
-    _long_mode_init();
+    // init_memory(&kernel_end);
+    remap_pic();
+    breakpoint();
     init_idt();
+    while(1) asm volatile("hlt");
     // init_exceptions();
-    // remap_pic();
     // init_pit();
     // init_tasking();
 
@@ -52,7 +41,6 @@ void kernel_main() {
     // dev_stats();    
 
     //pci_probe();
-    while(1);
 }
 
 void late_init() {
