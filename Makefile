@@ -17,6 +17,7 @@ drivers/keyboard.o \
 drivers/exceptions.o \
 drivers/pit.o \
 drivers/idt_asm.o \
+drivers/irq.o \
 utils/utils.o \
 utils/utils_asm.o \
 memory/gdt.o \

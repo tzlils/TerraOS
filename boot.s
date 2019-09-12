@@ -62,6 +62,15 @@ _long_mode_init:
 
 	add rsp, kernel_phys_offset
 	lgdt [gdt_ptr]
+	and rsp, -16        ; Align stack on 128 byte boundary
+
+	mov rax, cr0
+	and ax, 0xFFFB          ;clear coprocessor emulation CR0.EM
+	or ax, 0x2                      ;set coprocessor monitoring  CR0.MP
+	mov cr0, rax
+	mov rax, cr4
+	or ax, 3 << 9           ;set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	mov cr4, rax
 
 	mov rax, kernel_main
 	call rax
