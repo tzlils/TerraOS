@@ -18,6 +18,7 @@ drivers/exceptions.o \
 drivers/pit.o \
 drivers/idt_asm.o \
 drivers/irq.o \
+drivers/isr.o \
 utils/utils.o \
 utils/utils_asm.o \
 memory/gdt.o \
@@ -49,7 +50,7 @@ bochs:
 iso:
 	mkdir -p isodir/boot/grub
 	cp terraos.bin isodir/boot/terraos.bin
-	echo -e "menuentry "TerraOS" {\nmultiboot /boot/terraos.bin\n}" >> isodir/boot/grub/grub.cfg
+	echo "menuentry "TerraOS" {\n    multiboot /boot/terraos.bin\n}" >> isodir/boot/grub/grub.cfg
 	grub-mkrescue -o terraos.iso isodir
 	rm -r isodir
 

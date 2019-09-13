@@ -2,6 +2,7 @@
 #include "../include/serial.h"
 #include "../include/tasking.h"
 #include "../include/stdio.h"
+#include "../include/irq.h"
 
 
 static uint8_t task = 0;
@@ -18,7 +19,8 @@ void enable_task() {
 	task = 1;
 }
 
-void pit_irq() {
+void pit_irq(struct system_frame *r) {
+    printf ("PIT IRQ received\n");
 	if(!task) {
 		// asm volatile("add $0x1c, %esp");
 		// asm volatile("pusha");
@@ -63,7 +65,7 @@ static void pit_start_counter (uint32_t freq, uint8_t counter, uint8_t mode) {
 }
 
 void init_pit() {
-	set_int(32, (uint32_t)pit_irq);
+    register_irq_callback (IRQ0, pit_irq);
 	pit_start_counter (200,PIT_OCW_COUNTER_0, PIT_OCW_MODE_SQUAREWAVEGEN);
 	printf("[OS] PIT Ready\n");
 }

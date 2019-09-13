@@ -1,31 +1,9 @@
-#include "../include/serial.h"
 #include "../include/irq.h"
-#include "../include/idt.h"
-#include "../include/exceptions.h"
+#include "../include/pic.h"
 
-void *irq_routines[16] =
-{
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-};
-struct system_frame *r;
+void irq_default(struct system_frame *r);
+void (*irq_routines[16])(struct system_frame *) = { NULL };
 
-extern void irq0();
-extern void irq1();
-extern void irq2();
-extern void irq3();
-extern void irq4();
-extern void irq5();
-extern void irq6();
-extern void irq7();
-extern void irq8();
-extern void irq9();
-extern void irq10();
-extern void irq11();
-extern void irq12();
-extern void irq13();
-extern void irq14();
-extern void irq15();
 void irq_remap(void)
 {
     outb(0x20, 0x11);
@@ -43,11 +21,31 @@ void irq_remap(void)
 void init_irq(void)
 {
     irq_remap();
-    init_exceptions();
+    register_interrupt_handler(IRQ0, irq0, 0, 0x8e);
+    register_interrupt_handler(IRQ1, irq1, 0, 0x8e);
+    register_interrupt_handler(IRQ2, irq2, 0, 0x8e);
+    register_interrupt_handler(IRQ3, irq3, 0, 0x8e);
+    register_interrupt_handler(IRQ4, irq4, 0, 0x8e);
+    register_interrupt_handler(IRQ5, irq5, 0, 0x8e);
+    register_interrupt_handler(IRQ6, irq6, 0, 0x8e);
+    register_interrupt_handler(IRQ7, irq7, 0, 0x8e);
+    register_interrupt_handler(IRQ8, irq8, 0, 0x8e);
+    register_interrupt_handler(IRQ9, irq9, 0, 0x8e);
+    register_interrupt_handler(IRQ10, irq10, 0, 0x8e);
+    register_interrupt_handler(IRQ11, irq11, 0, 0x8e);
+    register_interrupt_handler(IRQ12, irq12, 0, 0x8e);
+    register_interrupt_handler(IRQ13, irq13, 0, 0x8e);
+    register_interrupt_handler(IRQ14, irq14, 0, 0x8e);
+    register_interrupt_handler(IRQ15, irq15, 0, 0x8e);
+    asm ("sti");
+}
+
+void irq_default(struct system_frame *r) {
+    printf("Unprocessed IRQ\n");
 }
 
 void irq_handler(struct system_frame *r) {
-    printf("GOT IRQ\n");
+//    printf("GOT IRQ 0x%x\n", r->int_no - 32);
     /* This is a blank function pointer */
     void (*handler)(struct system_frame *r);
 
@@ -68,4 +66,12 @@ void irq_handler(struct system_frame *r) {
     /* In either case, we need to send an EOI to the master
     *  interrupt controller too */
     outb(0x20, 0x20);
+}
+
+void send_eoi(uint8_t irq) {
+    pic_send_eoi(irq);
+}
+
+void register_irq_callback (size_t vec, void (*callback)(struct system_frame *)) {
+    irq_routines[vec - 32] = callback;
 }

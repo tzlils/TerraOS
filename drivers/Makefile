@@ -13,6 +13,7 @@ compile:
 	# $(AS) realmode.s -o realmode.o $(ASFLAGS)
 	$(AS) idt.s -o idt_asm.o $(ASFLAGS)
 	$(CC) irq.c -o irq.o $(CFLAGS)
+	$(CC) isr.c -o isr.o $(CFLAGS)
 
 clean:
 	rm *.o -f

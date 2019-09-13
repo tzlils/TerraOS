@@ -2,20 +2,25 @@
 #define IDT_H
 #include "../include/stdint.h"
 #include "../include/stddef.h"
+#include "../include/isr.h"
 
-struct system_frame {
-    uint64_t r15, r14, r13, r12, r11, r10, r9, r8;  /* pushed by 'pushall' */
-    uint64_t rdi, rsi, rbp, rbx, rdx, rcx, rax;  /* pushed by 'pushall' */
-    uint64_t int_no, err_code;    /* our 'push byte #' and ecodes do this */
-    uint64_t rip, cs, eflags, userrsp, ss;   /* pushed by the processor automatically */
+struct idt_entry {
+        uint16_t offset_1;
+        uint16_t selector;
+        uint8_t ist;
+        uint8_t type_attr;
+        uint16_t offset_2;
+        uint32_t offset_3;
+        uint32_t zero;
 };
 
+struct idt_ptr {
+        uint16_t limit;
+        uint64_t offset;
+} __attribute__((packed));
 
+extern void init_idt();
+extern void __idt_default_handler();
+extern int register_interrupt_handler(size_t vec, void (*handler)(struct system_frame *), uint8_t ist, uint8_t type);
 
-void init_idt();
-int register_interrupt_handler(size_t vec, void (*handler)(void), uint8_t ist, uint8_t type);
-
-#define INT_START asm volatile("pusha");
-#define INT_END asm volatile("popa"); \
-	asm volatile("iret");
 #endif
