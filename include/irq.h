@@ -1,6 +1,9 @@
 #ifndef IRQ_H
 #define IRQ_H
 
+#include "../include/stdint.h"
+#include "../include/isr.h"
+
 #define IRQ0 32
 #define IRQ1 33
 #define IRQ2 34
@@ -18,7 +21,23 @@
 #define IRQ14 46
 #define IRQ15 47
 
-
-void init_irq(void);
-
+extern void register_irq_callback (size_t vec, void (*callback)(struct system_frame *));
+extern void irq0(struct system_frame *);
+extern void irq1(struct system_frame *);
+extern void irq2(struct system_frame *);
+extern void irq3(struct system_frame *);
+extern void irq4(struct system_frame *);
+extern void irq5(struct system_frame *);
+extern void irq6(struct system_frame *);
+extern void irq7(struct system_frame *);
+extern void irq8(struct system_frame *);
+extern void irq9(struct system_frame *);
+extern void irq10(struct system_frame *);
+extern void irq11(struct system_frame *);
+extern void irq12(struct system_frame *);
+extern void irq13(struct system_frame *);
+extern void irq14(struct system_frame *);
+extern void irq15(struct system_frame *);
+extern void init_irq(void);
+extern void send_eoi(uint8_t irq);
 #endif

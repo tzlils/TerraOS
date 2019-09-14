@@ -1,19 +1,20 @@
 #include "../include/keyboard.h"
-#include "../include/idt.h"
 #include "../include/irq.h"
 #include "../include/stdio.h"
 #include "../include/device.h"
 #include "../include/memory.h"
-#include "../include/serial.h"
 
-void keyboard_handler() {
-    printf("Key clicked!\n");
+void keyboard_handler(struct system_frame *r) {
     uint8_t byte = inb(0x60);
+    if (byte & 0x80)
+        printf("Key released. Scan code: %x!\n", byte);
+    else
+        printf("Key press. Scan code: %x!\n", byte);
 }
 
 void init_keyboard() {
     outb(0x64, 0xFF);
-    register_interrupt_handler(IRQ1, keyboard_handler, 0, 0x8e);
+    register_irq_callback (IRQ1, keyboard_handler);
 
     printf("[OS] Keyboard ready\n");
     

@@ -1,8 +1,8 @@
 CC=x86_64-elf-gcc
 AS=nasm
-CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mcmodel=kernel
+CFLAGS=-c -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mcmodel=kernel -O3
 ASFLAGS=-f elf64
-LINKERFLAGS=-z max-page-size=0x1000 -Wl,--build-id=none -ffreestanding -O2 -nostdlib
+LINKERFLAGS=-z max-page-size=0x1000 -Wl,--build-id=none -ffreestanding -O3 -nostdlib
 
 KERNEL_OBJS=\
 boot.o \
@@ -20,6 +20,7 @@ drivers/idt_asm.o \
 drivers/irq.o \
 utils/utils.o \
 utils/utils_asm.o \
+drivers/isr.o \
 memory/gdt.o \
 memory/malloc.o \
 memory/paging.o \
