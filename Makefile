@@ -29,11 +29,13 @@ memory/gdt_asm.o \
 memory/paging_asm.o \
 display/tty.o \
 display/font.o \
+fs/vfs.o \
+fs/ext2.o \
 
 #drivers/realmode.o
 #display/vesa.o
 all: compile link iso
-start: start-32
+start: start-64
 
 start-32:
 	qemu-system-i386 terraos.iso
@@ -64,6 +66,7 @@ compile:
 	cd utils && make compile
 	cd memory && make compile
 	cd display && make compile
+	cd fs && make compile
 
 link:
 	$(CC) -T linker.ld -o terraos.bin $(LINKERFLAGS) $(KERNEL_OBJS)  -lgcc
@@ -75,5 +78,6 @@ clean:
 	cd utils && make clean
 	cd memory && make clean
 	cd display && make clean
+	cd fs && make clean
 	rm terraos.bin -f
 	rm *.o -f

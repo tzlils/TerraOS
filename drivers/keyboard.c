@@ -4,12 +4,15 @@
 #include "../include/device.h"
 #include "../include/memory.h"
 
+extern void halt();
 void keyboard_handler(struct system_frame *r) {
     uint8_t byte = inb(0x60);
-    if (byte & 0x80)
+    if (byte & 0x80) {
         printf("Key released. Scan code: %x!\n", byte);
-    else
+    } else {
+        if(byte == 1) halt();
         printf("Key press. Scan code: %x!\n", byte);
+    }
 }
 
 void init_keyboard() {

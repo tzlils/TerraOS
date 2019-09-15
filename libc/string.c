@@ -8,12 +8,11 @@ size_t strlen(const char* str) {
 	return len;
 }
 
-void* memset(void* bufptr, int value, size_t size) {
-	unsigned char* buf = (unsigned char*) bufptr;
-	for (size_t i = 0; i < size; i++) {
-		buf[i] = (unsigned char) value;
-    }
-	return bufptr;
+void* memset (void * ptr, int value, size_t num ) {
+	unsigned char* p=ptr;
+	while(num--)
+		*p++ = (unsigned char)value;
+	return ptr;
 }
 
 char *strcpy(char *dst, const char *src) {
@@ -50,4 +49,28 @@ char * strcat(char *dest, const char *src) {
         dest[i+j] = src[j];
     dest[i+j] = '\0';
     return dest;
+}
+
+size_t strsplit(char *str, char delim) {
+	size_t n = 0;
+	uint32_t i = 0;
+	while(str[i])
+	{
+		if(str[i] == delim)
+		{
+			str[i] = 0;
+			n++;
+		}
+		i++;
+	}
+	n++;
+	return n;
+}
+
+size_t strcmp(char* str1, char* str2) {
+	size_t res=0;
+	while (!(res = *(unsigned char*)str1 - *(unsigned char*)str2) && *str2)
+		++str1, ++str2;
+
+	return res;
 }

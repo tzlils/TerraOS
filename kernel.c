@@ -10,28 +10,31 @@
 #include "include/pit.h"
 #include "include/utils.h"
 #include "include/irq.h"
- #include "include/isr.h" 
+#include "include/isr.h" 
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
 
-extern uint32_t kernel_end;
-extern uint32_t KERNEL_VIRTUAL_BASE;
+extern uint64_t KERNEL_END;
+extern uint64_t KERNEL_VIRTUAL_BASE;
 
 void kernel_main() {    
     terminal_initialize();
     // set_vmode(1280, 720);
     move_cursor(0, 0);
-    printf("Hello world!\n\n");
-    
-    // init_memory(&kernel_end);
 
-    // init_paging();
+    //Thanks slendi
+    printf("Kernel has joined the game\n\n");
+    printf("%x, %x\n", &KERNEL_END, &KERNEL_VIRTUAL_BASE);
+    
+
+    init_paging();
     init_idt();
     init_isr();
     init_irq();
+    init_memory((uint64_t)&KERNEL_END);
 
     // init_dev();
     init_keyboard();

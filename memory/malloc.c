@@ -1,28 +1,30 @@
-#include "../include/stdint.h"
+// #include "../include/stdint.h"
 #include "../include/memory.h"
 #include "../include/utils.h"
 #include "../include/string.h"
 #include "../include/stdio.h"
+#include <stdint.h>
 
 #define MAX_PAGE_ALIGNED_ALLOCS 32
 #define PAGE_SIZE ((size_t)4096)
 #define PAGE_TABLE_ENTRIES 512
 #define KERNEL_PHYS_OFFSET ((size_t)0xffffffffc0000000)
 
-uint32_t last_alloc = 0;
-uint32_t heap_end = 0;
-uint32_t heap_begin = 0;
-uint32_t pheap_begin = 0;
-uint32_t pheap_end = 0;
+uintptr_t last_alloc = 0;
+uintptr_t heap_end = 0;
+uintptr_t heap_begin = 0;
+uintptr_t pheap_begin = 0;
+uintptr_t pheap_end = 0;
 uint8_t *pheap_desc = 0;
-uint32_t memory_used = 0;
+uint64_t memory_used = 0;
 
-void init_memory(uint32_t kernel_end) {
+void init_memory(uint64_t kernel_end) {
 	last_alloc = kernel_end + 0x1000;
 	heap_begin = last_alloc;
 	pheap_end = 0x400000;
 	pheap_begin = pheap_end - (MAX_PAGE_ALIGNED_ALLOCS * 4096);
 	heap_end = pheap_begin;
+	printf("Heap begin: %x\nHeap end: %x\nbegin+end: %x\n", heap_begin, heap_end, heap_begin-heap_end);
 	memset((char *)heap_begin, 0, heap_end - heap_begin);
 	pheap_desc = (uint8_t *)malloc(MAX_PAGE_ALIGNED_ALLOCS);
 }
@@ -55,7 +57,7 @@ char* malloc(size_t size)
 		{
 			a->status = 1;
 
-			//printf("RE:Allocated %d bytes from 0x%x to 0x%x\n", size, mem + sizeof(alloc_t), mem + sizeof(alloc_t) + size);
+			printf("RE:Allocated %d bytes from 0x%x to 0x%x\n", size, mem + sizeof(alloc_t), mem + sizeof(alloc_t) + size);
 			memset(mem + sizeof(alloc_t), 0, size);
 			memory_used += size + sizeof(alloc_t);
 			return (char *)(mem + sizeof(alloc_t));
@@ -77,7 +79,7 @@ char* malloc(size_t size)
 	last_alloc += size;
 	last_alloc += sizeof(alloc_t);
 	last_alloc += 4;
-	//printf("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)alloc + sizeof(alloc_t), last_alloc);
+	printf("Allocated %d bytes from 0x%x to 0x%x\n", size, (uint32_t)alloc + sizeof(alloc_t), last_alloc);
 	memory_used += size + 4 + sizeof(alloc_t);
 	memset((char *)((uint32_t)alloc + sizeof(alloc_t)), 0, size);
 	return (char *)((uint32_t)alloc + sizeof(alloc_t));

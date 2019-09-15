@@ -5,6 +5,7 @@
 static uint32_t* page_directory = 0;
 static uint32_t page_dir_loc = 0;
 static uint32_t* last_page = 0;
+extern void enable_paging();
 
 void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys)
 {
@@ -19,14 +20,6 @@ void paging_map_virtual_to_phys(uint32_t virt, uint32_t phys)
 	printf("Mapping 0x%x (%d) to 0x%x\n", virt, id, phys);
 }
 
-void paging_enable()
-{
-	// asm volatile("mov %%eax, %%cr3": :"a"(page_dir_loc));	
-	// asm volatile("mov %cr0, %eax");
-	// asm volatile("orl $0x80000000, %eax");
-	// asm volatile("mov %eax, %cr0");
-}
-
 void init_paging()
 {
 	printf("Setting up paging\n");
@@ -39,7 +32,7 @@ void init_paging()
 	}
 	paging_map_virtual_to_phys(0, 0);
 	paging_map_virtual_to_phys(0x400000, 0x400000);
-	// paging_enable();
+	enable_paging();
 	printf("Paging was successfully enabled!\n");
 }
 

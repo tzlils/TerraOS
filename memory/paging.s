@@ -1,4 +1,4 @@
-global paging_init, page_tables
+global paging_init, page_tables, enable_paging
 %define kernel_phys_offset 0xffffffffc0000000
 section .bss
 align 4096

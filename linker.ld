@@ -36,7 +36,7 @@ SECTIONS
 		_ebss = .;
 	}
 
-	kernel_end = .;
+	KERNEL_END = .;
 }
 
 
