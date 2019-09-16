@@ -1,5 +1,5 @@
 #include "../include/tasking.h"
-#include "../include/memory.h"
+#include "../include/kheap.h"
 #include "../include/pit.h"
 #include "../include/utils.h"
 
@@ -10,13 +10,13 @@ uint8_t __enabled = 0;
 extern void late_main();
 
 process* create_process(char* name, uint32_t addr) {
-    process* p = (process *)malloc(sizeof(process));
+    process* p = (process *)kmalloc(sizeof(process));
     memset(p, 0, sizeof(process));
     p->name = name;
     p->pid = ++lastpid;
     p->eip = addr;
     p->state = STATE_ALIVE;
-    p->esp = (uint32_t)malloc(4096);
+    p->esp = (uint32_t)kmalloc(4096);
     // asm volatile("mov %%cr3, %%eax":"=a"(p->cr3));
     uint32_t* stack = (uint32_t *)(p->esp + 4096);
     p->stacktop = p->esp;
@@ -126,8 +126,8 @@ void hunter_thread()
 			set_task(0);
 			p->prev->next = p->next;
 			p->next->prev = p->prev;
-			free((void *)p->stacktop);
-			free(p);
+			kfree((void *)p->stacktop);
+			kfree(p);
 			set_task(1);
 			// printf("Hunter killed %s (%d). One less zombie.\n", p->name, p->pid);
 		}

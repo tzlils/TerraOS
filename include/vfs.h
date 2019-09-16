@@ -3,7 +3,8 @@
 
 #include "../include/device.h"
 struct __device_t;
-typedef struct {
+
+typedef struct __fs_t {
     char *name; 
     uint8_t (*probe)(struct __device_t *);
 	uint8_t (*read)(char *, char *, struct __device_t *, void *);
@@ -17,7 +18,10 @@ typedef struct {
 
 typedef struct __mount_info_t {
 	char *loc;
-	filesystem_t *fs;
+	struct __device_t *dev;
 } mount_info_t;
 
+void vfs_init();
+void vfs_mount_device(struct __device_t *dev, char *loc);
+uint8_t list_mount();
 #endif

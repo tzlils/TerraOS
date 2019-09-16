@@ -1,12 +1,13 @@
 #include "../include/device.h"
-#include "../include/memory.h"
+#include "../include/kheap.h"
 #include "../include/stdio.h"
+#include "../include/string.h"
 
 device_t *devices = 0;
 uint8_t lastid = 0;
 
 void init_dev() {
-    devices = (device_t*)malloc(64*sizeof(device_t));
+    devices = (device_t*)kmalloc(64*sizeof(device_t));
 	memset(devices, 0, 64*sizeof(device_t));
 }
 

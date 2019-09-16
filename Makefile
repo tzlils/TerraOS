@@ -22,11 +22,13 @@ utils/utils.o \
 utils/utils_asm.o \
 drivers/isr.o \
 memory/gdt.o \
-memory/malloc.o \
+memory/kheap.o \
 memory/paging.o \
 memory/tasking.o \
 memory/gdt_asm.o \
 memory/paging_asm.o \
+memory/frame.o \
+memory/kmalloc_early.o \
 display/tty.o \
 display/font.o \
 fs/vfs.o \

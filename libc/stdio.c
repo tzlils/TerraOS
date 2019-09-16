@@ -215,11 +215,13 @@ int vprintf (const char* format, va_list list)
             switch (specifier) {
                 case 'X':
                     base = 16;
+                    continue;
                 case 'x':
                     base = base == 10 ? 17 : base;
                     if (altForm) {
                         displayString("0x", &chars);
                     }
+                    continue;
  
                 case 'u':
                 {
@@ -409,7 +411,7 @@ int vprintf (const char* format, va_list list)
                 case 'e':
                 case 'E':
                     emode = true;
- 
+                    continue;
                 case 'f':
                 case 'F':
                 case 'g':

@@ -1,8 +1,8 @@
 #include "../include/keyboard.h"
 #include "../include/irq.h"
 #include "../include/stdio.h"
-#include "../include/device.h"
 #include "../include/memory.h"
+#include "../include/serial.h"
 
 extern void halt();
 void keyboard_handler(struct system_frame *r) {

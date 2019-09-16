@@ -1,8 +1,9 @@
-#ifndef DEVICE_H_
-#define DEVICE_H_
+#ifndef DEVICE_H
+#define DEVICE_H
 
 #include "../include/stdint.h"
 #include "../include/vfs.h"
+
 typedef enum __device_type {
 	DEVICE_UNKNOWN = 0,
 	DEVICE_CHAR = 1,

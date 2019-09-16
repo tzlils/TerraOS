@@ -1,4 +1,6 @@
 #include "../include/pic.h"
+#include "../include/stdio.h"
+#include "../include/serial.h"
 
 #define MASTER_COMMAND 0x20
 #define MASTER_DATA 0x21
