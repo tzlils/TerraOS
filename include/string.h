@@ -10,13 +10,15 @@ extern "C" {
  
 // int memcmp(const void*, const void*, size_t);
 // void* memmove(void*, const void*, size_t);
+void strreverse(char* str);
 void* memset (void * ptr, int value, size_t num );
 size_t strlen(const char* str);
 char *strcpy(char *dst, const char *src);
-// void *memcpy(void *dst, const void *src, size_t n);
+void *memcpy(void *dst, const void *src, size_t n);
 char * strcat(char *dest, const char *src);
 size_t strsplit(char *str, char delim);
 size_t strcmp(char* str1, char* str2);
+size_t str_backspace(char* str, char c);
  
 #ifdef __cplusplus
 }

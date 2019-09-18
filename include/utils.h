@@ -8,5 +8,6 @@ char* itoa(int i, char b[]);
 void ftoa(float n, char *res, int afterpoint);
 int _itoa(int x, char str[], int d);
 void breakpoint();
+void rvereseArray(int arr[], int start, int end);
 
 #endif

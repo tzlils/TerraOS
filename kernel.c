@@ -21,6 +21,7 @@ extern "C" /* Use C linkage for kernel_main. */
 
 extern uint64_t KERNEL_END;
 extern uint64_t KERNEL_VIRTUAL_BASE;
+extern void init_shell();
 
 void kernel_main() {    
     terminal_initialize();
@@ -47,9 +48,11 @@ void kernel_main() {
     device_add(filesystem);
     construct_ext2_filesystem(filesystem);
     vfs_mount_device(filesystem, "/test");
+    filesystem->fs->touch("test", filesystem, filesystem->fs->metadata);
 
-    list_mount();
 
+    printf("STARING SHELL\n");
+    init_shell();
 
     while(1) asm ("hlt");
     // init_tasking();

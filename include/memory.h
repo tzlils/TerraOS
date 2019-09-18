@@ -45,11 +45,6 @@ struct	boundary_tag
 	struct boundary_tag *prev;	//< Linked list info.
 };
 
-extern int liballoc_lock();
-extern int liballoc_unlock();
-extern void* liballoc_alloc(int);
-extern int liballoc_free(void*,int);
-
 void init_paging(uint32_t total_frames, uint32_t ident_addr, uint32_t ident_len);
 extern void paging_enable();
 struct page *get_page(uint32_t address, int make, struct page_directory *dir);
@@ -57,7 +52,11 @@ struct free_header *find_block(uint32_t size, uint8_t align);
 struct page *map_page(uint32_t address, int make);
 void unmap_page(uint32_t address, int make);
 
-extern void* memcpy(const void* dest, const void* src, size_t num );
+struct page *get_kernel_page(uint32_t address, int make);
+struct page *map_kernel_page(uint32_t address, int make);
+void unmap_kernel_page(uint32_t address);
+
+// extern void* memcpy(const void* dest, const void* src, size_t num );
 // extern void* memset (void * ptr, int value, size_t num );
 extern void* memset16 (void *ptr, uint16_t value, size_t num);
 

@@ -1,6 +1,7 @@
 #include "../include/serial.h"
 #include "../include/isr.h"
 #include "../include/exceptions.h"
+#include "../include/stdio.h"
 
 void (*isr_routines[32])(struct system_frame *r) =
 {

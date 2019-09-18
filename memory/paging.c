@@ -2,6 +2,8 @@
 #include "../include/stdint.h"
 #include "../include/frame.h"
 #include "../include/kmalloc_early.h"
+#include "../include/stdio.h"
+#include "../include/string.h"
 
 struct page_directory *kernel_directory;
 struct page_directory *current_directory;

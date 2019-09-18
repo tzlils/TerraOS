@@ -1,6 +1,8 @@
 #include "../include/kheap.h"
 #include "../include/stddef.h"
 #include "../include/memory.h"
+#include "../include/string.h"
+#include "../include/stdio.h"
 
 #define INITIAL_HEAP_SIZE (0x1000 * INITIAL_HEAP_PAGE_COUNT)
 extern void halt();
@@ -451,7 +453,7 @@ static int unmap_blocks() {
     memend -= 0x1000;
     heap_free -= 0x1000;
     set_header_footer((char *)h, newsize);
-    unmap_kernel_page((uint32_t)memend);
+    unmap_page((uint32_t)memend, sizeof(uint32_t));
     return 1;
 }
 

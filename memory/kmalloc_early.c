@@ -1,5 +1,6 @@
 #include "../include/kmalloc_early.h"
 #include "../include/stddef.h"
+#include "../include/utils.h"
 
 extern uint64_t KERNEL_END;
 uint64_t placement_address = (uint64_t)&KERNEL_END;

@@ -74,3 +74,28 @@ size_t strcmp(char* str1, char* str2) {
 
 	return res;
 }
+
+
+size_t str_backspace(char* str, char c) {
+	size_t i = strlen(str);
+	i--;
+	while(i)
+	{
+		i--;
+		if(str[i] == c)
+		{
+			str[i+1] = 0;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void strreverse(char* str) {
+	size_t i;
+	char* newstr;
+	for (i = strlen(str); i > 0; i--) {
+		newstr[i] = str[i];
+	}
+	str = newstr;
+}

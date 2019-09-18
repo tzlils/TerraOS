@@ -2,6 +2,8 @@
 #include "../include/kheap.h"
 #include "../include/pit.h"
 #include "../include/utils.h"
+#include "../include/stdio.h"
+#include "../include/string.h"
 
 
 uint32_t lastpid = 0;
@@ -143,11 +145,11 @@ void task_thread() {
 
 void init_tasking() {
 	printf("Creating idle process\n");
-	c = create_process("kidle", (uint32_t)idle_thread);
+	c = create_process("kidle", (uint64_t)idle_thread);
 	c->next = c;
 	c->prev = c;
-	add_process_prime(create_process("task", (uint32_t)task_thread));
-	add_process_prime(create_process("Hunter", (uint32_t)hunter_thread));
+	add_process_prime(create_process("task", (uint64_t)task_thread));
+	add_process_prime(create_process("Hunter", (uint64_t)hunter_thread));
 	__exec();
 	PANIC("Failed to start tasking!");
 }

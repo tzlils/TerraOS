@@ -1,5 +1,7 @@
 #include "../include/frame.h"
 #include "../include/stddef.h"
+#include "../include/utils.h"
+#include "../include/kmalloc_early.h"
 
 uint32_t stack_count = 0;     
 uint32_t *free_frames = NULL;

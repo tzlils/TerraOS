@@ -22,6 +22,8 @@ typedef struct __mount_info_t {
 } mount_info_t;
 
 void vfs_init();
-void vfs_mount_device(struct __device_t *dev, char *loc);
+uint8_t vfs_mount_device(struct __device_t *dev, char *loc);
 uint8_t list_mount();
+uint32_t vfs_ls(char *dir, char* buffer);
+uint8_t vfs_touch(char *filename);
 #endif

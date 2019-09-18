@@ -22,8 +22,8 @@ typedef struct {
     uint32_t blocksize_shift;
     uint32_t fragmentsize_shift;
     uint32_t blockgroup_blocks;
-    uint32_t blockground_fragments;
-    uint32_t blockground_inodes;
+    uint32_t blockgroup_fragments;
+    uint32_t blockgroup_inodes;
     uint32_t last_mount;
     uint32_t last_write;
     uint16_t mounts_since_check;

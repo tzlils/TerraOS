@@ -20,6 +20,7 @@ drivers/idt_asm.o \
 drivers/irq.o \
 utils/utils.o \
 utils/utils_asm.o \
+utils/shell.o \
 drivers/isr.o \
 memory/gdt.o \
 memory/kheap.o \

@@ -1,5 +1,7 @@
 #include "../include/irq.h"
 #include "../include/pic.h"
+#include "../include/stdio.h"
+#include "../include/serial.h"
 
 void irq_default(struct system_frame *r);
 void (*irq_routines[16])(struct system_frame *) = { NULL };
