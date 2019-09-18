@@ -49,29 +49,29 @@ void vfs_init() {
     mount_points = (mount_info_t **)kmalloc(sizeof(uint32_t) * MAX_MOUNTS);
 }
 
-inline uint8_t __find_mount(char *filename, int *adjust)
-{
-	 char *orig = (char *)kmalloc(strlen(filename) + 1);
-	 memset(orig, 0, strlen(filename) + 1);
-	 memcpy(orig, filename, strlen(filename) + 1);
-	 if(orig[strlen(orig)] == '/') str_backspace(orig, '/');
-	 while(1)
-	 {
-	 	for(int i = 0;i<MAX_MOUNTS; i++)
-	 	{
-	 		if(!mount_points[i]) break;
-	 		if(strcmp(mount_points[i]->loc, orig) == 0)
-	 		{
-	 			*adjust = (strlen(orig) - 1);
-	 			kfree(orig);
+inline uint8_t __find_mount(char *filename, int *adjust) {
+	char *orig = (char *)kmalloc(strlen(filename) + 1);
+	memset(orig, 0, strlen(filename) + 1);
+	memcpy(orig, filename, strlen(filename) + 1);
+	if(orig[strlen(orig)] == '/') str_backspace(orig, '/');
+	while(1) {
+		for(int i = 0;i<MAX_MOUNTS; i++)
+		{
+			if(!mount_points[i]) break;
+			if(strcmp(mount_points[i]->loc, orig) == 0)
+			{
+				*adjust = (strlen(orig) - 1);
+				breakpoint();
+				kfree(orig);
 				return i;
-	 		}
-	 	}
-	 	if(strcmp(orig, "/") == 0)
+			}
+		}
+		printf("%s\n", orig);
+		if(strcmp(orig, "/") == 0)
 			break;
-	 	str_backspace(orig, '/');
-	 }
-	 return 0;
+		str_backspace(orig, '/');
+	}
+	return 0;
 }
 
 uint8_t vfs_read(char *filename, char *buffer)
@@ -109,17 +109,17 @@ uint8_t vfs_write(char *filename, char *buffer, uint8_t len)
 uint8_t vfs_touch(char *filename)
 {
 	/* Correct algorithm to resolve mounts:
-	 * In a loop remove until '/' and then look for match
-	 * if no match, continue until last '/' and then we know
-	 * it is on the root_device
-	 */
-	 int adjust = 0;
-	 int i = __find_mount(filename, &adjust);
-	 filename += adjust;
-	 //kprintf("Passing with adjust %d: %s\n", adjust, filename);
-	 mount_points[i]->dev->fs->touch(filename,
-				mount_points[i]->dev, mount_points[i]->dev->fs->metadata);
-	 return 0;
+		* In a loop remove until '/' and then look for match
+		* if no match, continue until last '/' and then we know
+		* it is on the root_device
+	*/
+	int adjust = 0;
+	int i = __find_mount(filename, &adjust);
+	filename += adjust;
+
+	mount_points[i]->dev->fs->touch(filename,
+			mount_points[i]->dev, mount_points[i]->dev->fs->metadata);
+	return 0;
 }
 
 uint32_t vfs_ls(char *dir, char* buffer) {

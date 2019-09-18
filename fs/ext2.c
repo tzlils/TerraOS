@@ -322,6 +322,7 @@ uint8_t touch(char *file, device_t *dev, ext2_metadata *priv) {
 		n--;
 	}
 	//kprintf("filename: %s\n", fil);
+		
 	ext2_dir *entry = (ext2_dir *)kmalloc(sizeof(ext2_dir) + strlen(fil) + 1);
 	entry->size = sizeof(ext2_dir) + strlen(fil) + 1;
 	entry->namelength = strlen(fil) + 1;
@@ -342,6 +343,7 @@ uint8_t touch(char *file, device_t *dev, ext2_metadata *priv) {
 	char *f = (char *)kmalloc(strlen(file) + 1);
 	memcpy(f, file, strlen(file) + 1);
 	str_backspace(f, '/');
+
 
 	//kprintf("LF: %s\n", f);
 	if(!inode) inode = (inode_t *)kmalloc(sizeof(inode_t));

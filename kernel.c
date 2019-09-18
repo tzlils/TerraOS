@@ -13,6 +13,7 @@
 #include "include/isr.h" 
 #include "include/vfs.h"
 #include "include/ext2.h"
+#include "include/memory.h"
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -32,7 +33,8 @@ void kernel_main() {
     printf("Kernel has joined the game\n\n");
     
 
-    initialize_kheap(256);
+    // initialize_kheap(512);
+    init_paging(512, KERNEL_END, KERNEL_VIRTUAL_BASE-KERNEL_END);
     init_idt();
     init_isr();
     init_irq();
@@ -44,12 +46,17 @@ void kernel_main() {
 
     vfs_init();
     device_t *filesystem = (device_t *)kmalloc(sizeof(device_t));
-    filesystem->name = "Filesystem";
-    device_add(filesystem);
+    filesystem->name = "filesystem";
+    filesystem->dev_type = DEVICE_BLOCK;
+    filesystem->read = 0;
+    filesystem->write = 0;
+    filesystem->unique_id = 0x1337;
     construct_ext2_filesystem(filesystem);
-    vfs_mount_device(filesystem, "/test");
-    filesystem->fs->touch("test", filesystem, filesystem->fs->metadata);
-
+    device_add(filesystem);
+    vfs_mount_device(filesystem, "/");
+    // printf("%s", filesystem->fs->name);
+    // list_mount();
+    vfs_touch("/test/test.txt");
 
     printf("STARING SHELL\n");
     init_shell();

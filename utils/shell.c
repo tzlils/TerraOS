@@ -48,13 +48,15 @@ void do_command() {
         printf("TerraOS was written by Terradice");
     } else if(strcmp(cmd, "mounts") == 0) {
         list_mount();
-    } else if(strcmp(cmd, "touch")) {
-        printf("Created file %s ", arguments[1]);
+    } else if(strcmp(cmd, "touch") == 0) {
         vfs_touch(arguments[1]);
+        printf("Created file %s ", arguments[1]);
     } else if(strcmp(cmd, "ls") == 0) {
         char* buf;
         vfs_ls("/", buf);
         printf("%s", buf);
+    } else {
+        printf("Unrecognized command");
     }
 }
 

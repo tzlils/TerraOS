@@ -4,6 +4,7 @@
 #include "../include/kmalloc_early.h"
 #include "../include/stdio.h"
 #include "../include/string.h"
+#include "../include/kheap.h"
 
 struct page_directory *kernel_directory;
 struct page_directory *current_directory;
@@ -25,12 +26,13 @@ void identity_map(uint32_t address, uint32_t length) {
     }
 }
 
-void init_paging(uint32_t total_frames, uint32_t ident_addr, uint32_t ident_len) {
+void init_paging(uint64_t total_frames, uint64_t ident_addr, uint64_t ident_len) {
     init_frame_allocator(total_frames);
 
     // Make a page directory for the kernel.
     kernel_directory = (struct page_directory *)e_kmalloc_a(sizeof (struct page_directory));
-    memset(kernel_directory, 0, sizeof (struct page_directory));
+
+    memset(&kernel_directory, 0, sizeof (struct page_directory));
     current_directory = kernel_directory;
 
     printf("Allocating kernel page tables... ");
@@ -74,7 +76,7 @@ void init_paging(uint32_t total_frames, uint32_t ident_addr, uint32_t ident_len)
 
 	enable_paging();
     printf("Initializing kheap... ");
-
+    initialize_kheap(heap_start);
     printf("Done\n");
 }
 
@@ -90,15 +92,14 @@ struct page *get_page(uint32_t address, int make, struct page_directory *dir) {
     else if(make)
     {
         uint32_t tmp;
-        if(!initialized)
-        {
+        if(!initialized) {
             dir->tables[table_idx] = (struct page_table *)e_kmalloc_ap(sizeof(struct page_table), &tmp);
         }
-        else
-        {
-            // dir->tables[table_idx] = (struct page_table *)kmalloc_ap(sizeof(struct page_table), 1, &tmp);
+        else {
+            dir->tables[table_idx] = (struct page_table *)kmalloc_ap(sizeof(struct page_table), 1, &tmp);
         }
-        memset(dir->tables[table_idx], 0, 0x1000);
+        // memset(dir->tables[table_idx], 0, 0x1000);
+        // breakpoint();
         dir->tablesPhysical[table_idx] = tmp | 0x7; // PRESENT, RW, US.
         return &dir->tables[table_idx]->pages[address%1024];
     }
