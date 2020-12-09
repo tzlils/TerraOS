@@ -45,6 +45,7 @@ void draw_polygon(int num, ...) {
         if(i < 1) {
             draw_line(last_vec, va_arg(vertices, Vector2));
         }
+        last_vec = va_arg(vertices, Vector2);
     }
     
 

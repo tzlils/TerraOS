@@ -14,6 +14,7 @@
 #include <kernel/math.h>
 #include <kernel/draw.h>
 #include <kernel/kheap.h>
+#include <kernel/paging.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -39,23 +40,33 @@ void show_ver() {
 void kernel_main(struct multiboot_info *mi) {
 	terminal_initialize();
     set_vmode(1280, 720);
+
+    // uint32_t low_pages = 256; // 1024 * 1024 bytes / 4096
+    // uint32_t high_pages = (mi->mem_upper * 1024) / 4096;
+
+    // uint32_t total_frames = high_pages + low_pages;
+    // initialize_paging(total_frames, get_framebuffer_addr(), get_framebuffer_length());
+    // malloc_stats();
+
+
     show_ver();
     init_gdt();
     remap_pic();
     init_idt();
-	initialize_keyboard();
     initialize_kheap(256);
+	initialize_keyboard();
 
-    printf ("Log2 of 10: %f\n", log2(10));
+    printf ("Log2 of 10: %d\n", log2(10));
     printf ("2 To the power of 16: %i\n", pow(2, 16));
     printf("Max of 1, 5: %i\n", max(1, 5));
-    printf("Sin of 5: %f\n", sin(5));
+    printf("Sin of 5: %d\n", sin(5));
 
     //set_vesa_background(make_vesa_color(255, 255, 255));
     int angle = 0;
     double x, y;
 
     draw_hello();
+    //draw_polygon(3, *Vector2_new(1280/2, 720/2), *Vector2_new(1280/2-100, 720/2-100), *Vector2_new(1280/2+100, 720/2+100));
     draw_line(*Vector2_new(0, 720/2), *Vector2_new(1280, 720/2));
     for (size_t i = 0; i < 1280; i+=20)
     {
@@ -68,23 +79,10 @@ void kernel_main(struct multiboot_info *mi) {
         y = 720/2 - y;
         draw_pixel_at(x, y, get_vesa_color());
         angle+=5;
+
         pause();
     }
-    
-    //while(1) {
-        //set_vesa_color(make_vesa_color(r, g, b));
-        //r = log2(g);
-        //g = log2(b);
-        //b = log2(r);
-        //pause();
-    //}
-
-    // uint32_t low_pages = 256; // 1024 * 1024 bytes / 4096
-    // uint32_t high_pages = (mi->mem_upper * 1024) / 4096;
-
-    // uint32_t total_frames = high_pages + low_pages;
-    //initialize_paging(total_frames, get_framebuffer_addr(), get_framebuffer_length());
-    //malloc_stats();
+    while(1);
 
     // for (size_t x = 0; x < 1280; x++)
     // {

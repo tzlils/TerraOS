@@ -52,7 +52,7 @@ arch/i386/realmode.o \
 arch/i386/math.o \
 arch/i386/draw.o \
 arch/i386/geometry.o \
-
+arch/i386/net.o \
 
 OBJS=\
 $(ARCHDIR)/crti.o \

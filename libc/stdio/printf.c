@@ -64,7 +64,7 @@ int printf(const char* restrict format, ...) {
 			if (!print(str, len))
 				return -1;
 			written += len;
-		} else if(*format == 'f') {
+		} else if(*format == 'd') {
 			format++;
 			const char* str;
 			ftoa(va_arg(parameters, double), str, FLOAT_PER);
